@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "xml2json": "^0.12.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
   }
 }
