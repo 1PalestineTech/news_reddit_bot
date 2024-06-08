@@ -1,0 +1,15 @@
+{
+  "name": "news_reddit_bot",
+  "version": "1.0.0",
+  "description": "bot for reddit that post news",
+  "main": "main.js",
+  "scripts": {
+    "start": "node src/wraper.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ali",
+  "license": "MIT",
+  "devDependencies": {
+    "xml2json": "^0.12.0"
+  }
+}
