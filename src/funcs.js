@@ -2,7 +2,7 @@ const convert = require('xml-js');
 const request = require('request');
 const sqlite3 = require("sqlite3").verbose();
 const snoowrap = require('snoowrap');
-const db = new sqlite3.Database("../data.db",sqlite3.OPEN_READWRITE,(err)=>{
+const db = new sqlite3.Database("data.db",sqlite3.OPEN_READWRITE,(err)=>{
     if(err) return console.error(err.message)
 });
 const Bot = new snoowrap({

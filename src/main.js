@@ -4,6 +4,7 @@ const {main,links} = require("./funcs.js");
 function run(){
   main(links)
   setTimeout(() => {
-    quora_cat(db,client);
+    main(links);
 }, 180000);
 }
+run();
