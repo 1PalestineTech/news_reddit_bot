@@ -1,10 +1,10 @@
 
 
 const {main,links} = require("./funcs.js");
-function run(){
-  main(links)
+async function run(){
+  main(links);
   setTimeout(() => {
-    main(links);
-}, 180000);
+    run();
+}, 120000);
 }
 run();
