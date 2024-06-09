@@ -1,5 +1,4 @@
 
-
 const {main,links} = require("./funcs.js");
 async function run(){
   main(links);

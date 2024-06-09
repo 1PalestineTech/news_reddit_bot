@@ -1,15 +1,17 @@
 const convert = require('xml-js');
+require('dotenv').config()
 const request = require('request');
 const sqlite3 = require("sqlite3").verbose();
 const snoowrap = require('snoowrap');
+const {decode} =require('html-entities');
 const db = new sqlite3.Database("data.db",sqlite3.OPEN_READWRITE,(err)=>{
     if(err) return console.error(err.message)
 });
 const Bot = new snoowrap({
-    userAgent: 'Ali-aaa',
-    clientId: 'pZZiSIVW5zLPa6Cl81KRiA',
-    clientSecret: 'CpyzUej-A7NnOug73F82kYgeHauvIg',
-    refreshToken: '96378543905824-zb-wuJx9NWnBYmBYofbRWWS2ChXLvw'
+    userAgent:  process.env.userAgent ,
+    clientId:  process.env.clientId,
+    clientSecret:  process.env.clientSecret,
+    refreshToken:  process.env.refreshToken
   });
   
   
@@ -44,6 +46,7 @@ const links = ['https://www.aljazeera.com/xml/rss/all.xml'   ,
 'https://therealnews.com/feed'                          ,
 'https://www.readthemaple.com/rss/'                 ];
 
+// work good
 function check_url(db,res, callback) {
     const data=db.all(`SELECT url FROM urls WHERE url = ? `,[res['link']],(err,row)=>{
         if(err) return console.error(err.message);
@@ -58,6 +61,7 @@ function check_url(db,res, callback) {
             }
     });
 }
+// work good
 function remove_item(array,index){
     let arr = [];
     for (let i = 0 ;i < array.length ;i++){
@@ -75,6 +79,7 @@ function get_data(url,callback){
     console.error('error:', error); 
     var Json = JSON.parse(convert.xml2json(body, {compact: false, spaces: 4}));
     if (url != 'https://jacobin.com/feed/'){
+        console.log(url)
         elements = Json['elements'][0]['elements'][0]["elements"]
         for (i in elements){
             if (elements[i]["name"] == "item" ){
@@ -84,6 +89,7 @@ function get_data(url,callback){
                         post["link"] = element[j]["elements"][0]["text"] ;
                     }else if(element[j]["name"] == "title"){
                         post["title"] = element[j]["elements"][0]["text"] || element[j]["elements"][0]["cdata"];
+
                     }
                 };
                 
@@ -121,7 +127,7 @@ links=remove_item(links,index)
     get_data(url ,function(res){
     check_url(db,res,function(res,v){
         if(v){
-            Bot.getSubreddit('ali_bot').submitLink({title: res['title'], url: res['link']});
+            Bot.getSubreddit(process.env.SUB_REDDIT).submitLink({title: decode(res['title']), url: res['link']});
             console.log("posted")
         }
         else{
