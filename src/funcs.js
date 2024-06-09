@@ -6,10 +6,10 @@ const db = new sqlite3.Database("data.db",sqlite3.OPEN_READWRITE,(err)=>{
     if(err) return console.error(err.message)
 });
 const Bot = new snoowrap({
-    userAgent: 'Ali-aaa',
-    clientId: 'pZZiSIVW5zLPa6Cl81KRiA',
-    clientSecret: 'CpyzUej-A7NnOug73F82kYgeHauvIg',
-    refreshToken: '96378543905824-zb-wuJx9NWnBYmBYofbRWWS2ChXLvw'
+    userAgent: '',
+    clientId: '',
+    clientSecret: '',
+    refreshToken: ''
   });
   
   
@@ -121,7 +121,7 @@ links=remove_item(links,index)
     get_data(url ,function(res){
     check_url(db,res,function(res,v){
         if(v){
-            Bot.getSubreddit('ali_bot').submitLink({title: res['title'], url: res['link']});
+            Bot.getSubreddit('reddit_sub').submitLink({title: res['title'], url: res['link']});
             console.log("posted")
         }
         else{
