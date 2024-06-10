@@ -17,34 +17,39 @@ const Bot = new snoowrap({
   
   
 
-const links = ['https://www.aljazeera.com/xml/rss/all.xml'   ,
-'https://www.middleeasteye.net/rss'                     ,
-'https://www.palestinechronicle.com/feed/'              ,
-'https://electronicintifada.net/rss.xml'                ,
-'https://mondoweiss.net/feed/'                          ,
-'https://www.972mag.com/feed'                           ,
-'https://daysofpalestine.ps/feed/'                      ,
-'https://freehaifa.wordpress.com/feed/'                 ,
-'https://richardfalk.org/feed/'                         ,
-'https://israelpalestinenews.org/feed'                  ,
-'https://palsolidarity.org/feed/'                       ,
-'https://www.commondreams.org/feeds/feed.rss'           ,
-'https://jfjfp.com/feed/'                               ,
-'https://english.pnn.ps/feed'                           ,
-'https://ramzybaroud.net/feed/'                         ,
-'https://realmedia.press/feed/'                         ,
-'https://samidoun.net/feed/'                            ,
-'https://thegrayzone.com/feed/'                         ,
-'https://theintercept.com/feed'                         ,
-'https://www.newarab.com/rss'                           ,
-'https://english.palinfo.com/feed'                      ,
-'https://thecradle.co/feed'                             ,
-'https://zeteo.com/feed'                                ,
-'https://original.antiwar.com/feed/'                    ,
-'https://www.juancole.com/feed'                         ,
-'https://jacobin.com/feed/'                             ,
-'https://therealnews.com/feed'                          ,
-'https://www.readthemaple.com/rss/'                 ];
+const links = ['http://theconversation.edu.au/articles'      ,
+'https://inthesetimes.com/rss'                               ,
+'https://bdsmovement.net/rss-feed.xml'                       ,
+'https://www.newarab.com/rss'                                ,
+'http://www.guardian.co.uk/world/palestinian-territories/rss',
+'https://daysofpalestine.ps/feed/'                           ,
+'https://www.aljazeera.com/xml/rss/all.xml'                  ,
+'https://www.middleeasteye.net/rss'                          ,
+'https://www.palestinechronicle.com/feed/'                   ,
+'https://electronicintifada.net/rss.xml'                     ,
+'https://mondoweiss.net/feed/'                               ,
+'https://www.972mag.com/feed'                                ,
+'https://daysofpalestine.ps/feed/'                           ,
+'https://freehaifa.wordpress.com/feed/'                      ,
+'https://richardfalk.org/feed/'                              ,
+'https://israelpalestinenews.org/feed'                       ,
+'https://palsolidarity.org/feed/'                            ,
+'https://www.commondreams.org/feeds/feed.rss'                ,
+'https://english.pnn.ps/feed'                                ,
+'https://ramzybaroud.net/feed/'                              ,
+'https://realmedia.press/feed/'                              ,
+'https://samidoun.net/feed/'                                 ,
+'https://thegrayzone.com/feed/'                              ,
+'https://theintercept.com/feed'                              ,
+'https://www.newarab.com/rss'                                ,
+'https://english.palinfo.com/feed'                           ,
+'https://thecradle.co/feed'                                  ,
+'https://zeteo.com/feed'                                     ,
+'https://original.antiwar.com/feed/'                         ,
+'https://www.juancole.com/feed'                              ,
+'https://jacobin.com/feed/'                                  ,
+'https://therealnews.com/feed'                               ,
+'https://www.readthemaple.com/rss/'                         ];
 
 // work good
 function check_url(db,res, callback) {
@@ -78,7 +83,7 @@ function get_data(url,callback){
     request(url,function (error, response, body) {
     console.error('error:', error); 
     var Json = JSON.parse(convert.xml2json(body, {compact: false, spaces: 4}));
-    if (url != 'https://jacobin.com/feed/'){
+    if (url != 'https://jacobin.com/feed/' && url != 'http://theconversation.edu.au/articles'){
         console.log(url)
         elements = Json['elements'][0]['elements'][0]["elements"]
         for (i in elements){
@@ -96,15 +101,15 @@ function get_data(url,callback){
                 return callback(post);
             }
         }
-    }else{
+    }else {
         elements = Json['elements'][0]['elements']
         for (i in elements){
             if (elements[i]["name"] == "entry" ){
                 element = elements[i]["elements"];
                 for (j in element){
                     if(element[j]["name"] == "link"){
-                        post["link"] = element[j]["attributes"]["href"] ;
-                        post["title"] = element[j]["attributes"]["title"] ;
+                        post["link"] = element[j]["attributes"]["href"]
+                        post["title"] = element[j]["attributes"]["title"] ||element[4]['elements'][0]['text'];
                      
                     }; 
                 }
