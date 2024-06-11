@@ -53,12 +53,13 @@ const links = ['http://theconversation.edu.au/articles'      ,
 
 // work good ===================
 function check_regex(regexs,text) { 
+      
     for(let i=0;i<regexs.length;i++){
         if(text.search(regexs[i]) != -1){
             return true;
         }
     }
-    return false;
+return false
 }
 
 function check_url(db,res, callback) {
@@ -76,7 +77,7 @@ function check_url(db,res, callback) {
         regex[8]=/Church of St\.? Mary of Agony|Ethiopian Monastery|Vincent de Paul Chapel|Chiesa Dell'?Ascensione|Coptic Orthodox Patriarchate Jerusalem|Latin Patriarchate of Jerusalem|The Monastery of Saint Saviour|Greek Catholic Church of St\.? Veronica/i
         regex[9]=/Auguste Victoria|Coptic Church of St\.? Helen|Church of Saint Alexander Nevskiy|Emmaus Nicopolis|St Mark'?s Syriac Church|Pools of Bethesda|Jerusalem Baptist Church|Dominus Flevit Church|St\.? James Cathedral Church|St\.? George'?s Monastery/i
     // ===================================================
-    if(!check_regex(regex,title)){
+    if(typeof title === "undefined" || !check_regex(regex,title)){
             return callback(res,false);
     }
     const data=db.all(`SELECT url FROM urls WHERE url = ? `,[res['link']],(err,row)=>{
@@ -144,7 +145,7 @@ async function main (links){
     let time = 0;
     for(let i =0;i<links.length;i++){
          get_data(links[i],function(res){
-            if (res!={}){
+            if (res !={} ){
             check_url(db,res,function(res,v){
                 if(v){
                     setTimeout(()=>{Bot.getSubreddit(process.env.SUB_REDDIT).submitLink({title: res['title'], url: res['link']});console.log("posted :"+res['title'])},60000*time)

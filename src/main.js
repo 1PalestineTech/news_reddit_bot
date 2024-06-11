@@ -9,7 +9,7 @@ async function run(){
   setTimeout(()=>{
     run();
   }
-,30000);
+,120000);
 }
 console.log("Bot started ============================")
 run();
