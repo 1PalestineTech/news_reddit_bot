@@ -9,12 +9,12 @@
   },
   "author": "ali",
   "license": "MIT",
-  "devDependencies": {
-    "xml2json": "^0.12.0"
-  },
   "dependencies": {
     "dotenv": "^16.4.5",
     "html-entities": "^2.5.2",
-    "sqlite3": "^5.1.7"
+    "request": "^2.88.2",
+    "snoowrap": "^1.23.0",
+    "sqlite3": "^5.1.7",
+    "xml-js": "^1.6.11"
   }
 }
