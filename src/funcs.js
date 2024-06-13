@@ -20,7 +20,6 @@ const Bot = new snoowrap({
 const links = ['http://theconversation.edu.au/articles'      ,
 'https://inthesetimes.com/rss'                               ,
 'https://bdsmovement.net/rss-feed.xml'                       ,
-'https://www.newarab.com/rss'                                ,
 'http://www.guardian.co.uk/world/palestinian-territories/rss',
 'https://daysofpalestine.ps/feed/'                           ,
 'https://www.aljazeera.com/xml/rss/all.xml'                  ,
@@ -50,6 +49,8 @@ const links = ['http://theconversation.edu.au/articles'      ,
 'https://jacobin.com/feed/'                                  ,
 'https://therealnews.com/feed'                               ,
 'https://www.readthemaple.com/rss/'                         ];
+
+
 
 // work good ===================
 function check_regex(regexs,text) { 
@@ -113,7 +114,7 @@ async function get_data(url,callback){
                             if(element[j]["name"] == "link"){
                                 post["link"] = element[j]["elements"][0]["text"] ;
                             }else if(element[j]["name"] == "title"){
-                            post["title"] = element[j]["elements"][0]["text"] || element[j]["elements"][0]["cdata"];
+                            post["title"] = decode(element[j]["elements"][0]["text"] || element[j]["elements"][0]["cdata"]);
                             }
                         }
                 
