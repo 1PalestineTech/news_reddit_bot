@@ -1,12 +1,10 @@
-{
-"SUB_REDDIT":"",
+{"SUB_REDDIT":"",
 "userAgent":"",
 "clientId":"",
 "clientSecret":"",
 "refreshToken":"",
 "regex":[],
-"links":[],
+"links":["ali"],
 "special-links":[],
 "database":[],
-"flag":true
-}
+"flag":true}
