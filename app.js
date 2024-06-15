@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const fs=require("fs");
 const app=express()
 
-
+const request = require('request');
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 var staticPath = path.join(__dirname, "static");
@@ -72,7 +72,16 @@ fs.writeFile('./config.json', req.body.conf, err => {
 
   })
 })
-
+app.get("/test", function(req, res) {
+  res.render("test.ejs",{data:""})
+})
+app.post("/test", function(req, res) {
+  console.log(req.body.link)
+  request(req.body.link,function (error, response, body) {
+    res.render("test.ejs",{data:body})
+  })
+  
+})
 main()
 console.log("Bot started ============================")
 

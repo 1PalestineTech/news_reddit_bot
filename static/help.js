@@ -51,3 +51,28 @@ function Start(){
     
     })
         }
+        function Clear(){
+            document.getElementById("check-url").innerHTML="";
+
+        }
+        /*
+        function Check(){
+            let link = document.getElementById("link").value
+
+            const options = {
+                headers: {
+
+                    "Content-Type": "application/json",
+                
+                  },
+                method: 'POST',
+                body: '{"link":"http://theconversation.edu.au/articles"}'
+            };
+            fetch( './check_url', options )
+                .then( response => response.text() )
+                .then( response => {
+                    document.getElementById("check-url").innerHTML=response;
+                } );
+
+
+        }*/
