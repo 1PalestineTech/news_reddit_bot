@@ -10,6 +10,7 @@
   "author": "ali",
   "license": "MIT",
   "dependencies": {
+    "better-sqlite3": "^11.0.0",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",

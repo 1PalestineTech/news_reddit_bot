@@ -16,10 +16,12 @@ app.get("/", function(req, res) {
   })
   app.get("/get_log", function(req, res) {
     fs.readFile('./logger.txt', 'utf8', (err, data) => {
-      res.send(data);
+     
+      res.send(data.split("\n").reverse().join("\n"));
     });
 
   })
+
 app.get("/config", function(req, res) {
   fs.readFile('./config.json', 'utf8', (err, data) => {
     res.render("config.ejs",{data:data});
@@ -65,19 +67,9 @@ fs.writeFile('./config.json', req.body.conf, err => {
   })
 })
 
-async function run(){
-
-  main();
-
-
-
-setTimeout(()=>{
-  run();
-}
-,600000);
-}
+main()
 console.log("Bot started ============================")
-run();
+
 app.listen(3000, function() {
     console.log("App started on port 3000");
   });

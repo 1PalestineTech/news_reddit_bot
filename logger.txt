@@ -1,7 +1,340 @@
-gllo gg
-
-
-
-
-aaa
-ali
+no new news from :https://electronicintifada.net/rss.xml
+no new news from :https://www.commondreams.org/feeds/feed.rss
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://english.pnn.ps/feed
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://zeteo.com/feed
+no new news from :https://thecradle.co/feed
+no new news from :https://www.972mag.com/feed
+no new news from :https://www.middleeasteye.net/rss
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://english.palinfo.com/feed
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://richardfalk.org/feed/
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://realmedia.press/feed/
+no new news from :https://www.readthemaple.com/rss/
+detected new data from :http://www.guardian.co.uk/world/palestinian-territories/rss
+now testing regex:http://www.guardian.co.uk/world/palestinian-territories/rss
+regex matched  -------------------
+posted : Israel is fighting a war on two fronts. No end is in sight for either one | Peter Beaumont
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+no new news from :https://www.juancole.com/feed
+no new news from :https://inthesetimes.com/rss
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+no new news from :https://theintercept.com/feed
+no new news from :https://samidoun.net/feed/
+no new news from :https://therealnews.com/feed
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+no new news from :https://www.972mag.com/feed
+no new news from :https://thecradle.co/feed
+no new news from :https://english.pnn.ps/feed
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://inthesetimes.com/rss
+no new news from :https://ramzybaroud.net/feed/
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+no new news from :https://zeteo.com/feed
+no new news from :https://english.palinfo.com/feed
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://therealnews.com/feed
+no new news from :https://www.middleeasteye.net/rss
+no new news from :https://theintercept.com/feed
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://richardfalk.org/feed/
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://realmedia.press/feed/
+no new news from :https://samidoun.net/feed/
+no new news from :https://original.antiwar.com/feed/
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+no new news from :https://www.juancole.com/feed
+no new news from :https://www.readthemaple.com/rss/
+detected new data from :http://www.guardian.co.uk/world/palestinian-territories/rss
+now testing regex:http://www.guardian.co.uk/world/palestinian-territories/rss
+regex matched  -------------------
+posted : Israel is fighting a war on two fronts. No end is in sight for either one | Peter Beaumont
+no new news from :https://electronicintifada.net/rss.xml
+no new news from :https://inthesetimes.com/rss
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+no new news from :https://english.pnn.ps/feed
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://zeteo.com/feed
+detected new data from :https://daysofpalestine.ps/feed/
+now testing regex:https://daysofpalestine.ps/feed/
+regex matched  -------------------
+posted : Gaza Office Condemns Israel’s Ban on Animal Sacrifices Upon Eid
+no new news from :https://thecradle.co/feed
+no new news from :https://www.972mag.com/feed
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://richardfalk.org/feed/
+no new news from :https://www.middleeasteye.net/rss
+detected new data from :http://www.guardian.co.uk/world/palestinian-territories/rss
+now testing regex:http://www.guardian.co.uk/world/palestinian-territories/rss
+regex matched  -------------------
+posted : Israel is fighting a war on two fronts. No end is in sight for either one | Peter Beaumont
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://theintercept.com/feed
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://english.palinfo.com/feed
+no new news from :https://palsolidarity.org/feed/
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://realmedia.press/feed/
+no new news from :https://therealnews.com/feed
+no new news from :https://www.readthemaple.com/rss/
+no new news from :https://samidoun.net/feed/
+no new news from :https://www.juancole.com/feed
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://inthesetimes.com/rss
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://www.middleeasteye.net/rss
+no new news from :https://www.972mag.com/feed
+no new news from :https://english.pnn.ps/feed
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://thecradle.co/feed
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://richardfalk.org/feed/
+no new news from :https://bdsmovement.net/rss-feed.xml
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://www.972mag.com/feed
+no new news from :https://thecradle.co/feed
+no new news from :https://inthesetimes.com/rss
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://english.palinfo.com/feed
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://zeteo.com/feed
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://www.middleeasteye.net/rss
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://english.pnn.ps/feed
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://richardfalk.org/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://www.readthemaple.com/rss/
+no new news from :https://www.juancole.com/feed
+no new news from :http://www.guardian.co.uk/world/palestinian-territories/rss
+no new news from :https://theintercept.com/feed
+no new news from :https://realmedia.press/feed/
+no new news from :https://therealnews.com/feed
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+no new news from :https://samidoun.net/feed/
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://www.972mag.com/feed
+no new news from :https://inthesetimes.com/rss
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://english.pnn.ps/feed
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://richardfalk.org/feed/
+no new news from :https://english.palinfo.com/feed
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://zeteo.com/feed
+no new news from :https://www.middleeasteye.net/rss
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :http://www.guardian.co.uk/world/palestinian-territories/rss
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://thecradle.co/feed
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://realmedia.press/feed/
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://www.readthemaple.com/rss/
+no new news from :https://www.juancole.com/feed
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+no new news from :https://samidoun.net/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://therealnews.com/feed
+no new news from :https://theintercept.com/feed
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://english.pnn.ps/feed
+no new news from :https://zeteo.com/feed
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://english.palinfo.com/feed
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://www.972mag.com/feed
+no new news from :https://inthesetimes.com/rss
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://freehaifa.wordpress.com/feed/
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://www.middleeasteye.net/rss
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://richardfalk.org/feed/
+no new news from :https://www.readthemaple.com/rss/
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://www.juancole.com/feed
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+no new news from :https://realmedia.press/feed/
+no new news from :https://theintercept.com/feed
+no new news from :http://www.guardian.co.uk/world/palestinian-territories/rss
+no new news from :https://www.palestinechronicle.com/feed/
+detected new data from :http://theconversation.edu.au/articles
+now testing regex:http://theconversation.edu.au/articles
+regex didn't match -------------------
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://samidoun.net/feed/
+detected new data from :https://therealnews.com/feed
+now testing regex:https://therealnews.com/feed
+regex didn't match -------------------
+detected new data from :https://www.newarab.com/rss
+now testing regex:https://www.newarab.com/rss
+regex didn't match -------------------
+no new news from :https://thecradle.co/feed
+no new news from :https://electronicintifada.net/rss.xml
+detected new data from :https://www.aljazeera.com/xml/rss/all.xml
+now testing regex:https://www.aljazeera.com/xml/rss/all.xml
+regex didn't match -------------------
+no new news from :https://inthesetimes.com/rss
+no new news from :https://www.972mag.com/feed
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://mondoweiss.net/feed/
+no new news from :https://thegrayzone.com/feed/
+no new news from :https://daysofpalestine.ps/feed/
+no new news from :https://english.palinfo.com/feed
+no new news from :https://www.commondreams.org/feeds/feed.rss
+no new news from :https://zeteo.com/feed
+no new news from :https://www.readthemaple.com/rss/
+no new news from :https://english.pnn.ps/feed
+no new news from :https://ramzybaroud.net/feed/
+no new news from :https://original.antiwar.com/feed/
+no new news from :https://www.middleeasteye.net/rss
+no new news from :https://palsolidarity.org/feed/
+no new news from :https://richardfalk.org/feed/
+no new news from :https://realmedia.press/feed/
+detected new data from :https://israelpalestinenews.org/feed
+now testing regex:https://israelpalestinenews.org/feed
+regex matched  -------------------
+posted : The night Israel killed my family
+detected new data from :https://jacobin.com/feed/
+now testing regex:https://jacobin.com/feed/
+regex didn't match -------------------
+no new news from :https://www.palestinechronicle.com/feed/
+no new news from :https://bdsmovement.net/rss-feed.xml
+no new news from :https://freehaifa.wordpress.com/feed/

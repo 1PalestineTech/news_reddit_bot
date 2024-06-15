@@ -6,12 +6,17 @@ const request = require('request');
 const sqlite3 = require("sqlite3").verbose();
 const snoowrap = require('snoowrap');
 const {decode} =require('html-entities');
-const db = new sqlite3.Database("./data.db",sqlite3.OPEN_READWRITE,(err)=>{
-    if(err) return console.error(err.message)
-});
 
-  
-  
+
+ function write_log(val){
+    fs.appendFileSync('./logger.txt', val+"\n", err => {
+    
+  });
+}
+
+const db = require('better-sqlite3')('./data.db');
+
+
 
 // work good ===================
 function check_regex(regexs,text) { 
@@ -30,33 +35,38 @@ function check_regex(regexs,text) {
 return false
 }
 
-function check_url(db,res,regex, callback) {
+ function check_url(db,res,regex, callback) {
     let title=res['title'];
     
     if(typeof title === "undefined"){
-console.log("couldn't get text")
-            return callback(res,false);
+            callback(res,false);
+            return 
     }else if(!check_regex(regex,title)){
-        
-        return callback(res,false);
+        write_log("regex didn't match -------------------" )
+
+         callback(res,false);
+         return
     }
-    const data=db.all(`SELECT url FROM urls WHERE url = ? `,[res['link']],(err,row)=>{
-        if(err) return console.error(err.message);
-            if(row.length>0){
-              return callback(res,false)
-            }else{
-                db.run(`INSERT INTO urls VALUES (?)`,[res['link']],(err)=>{
-                if(err) return console.error(err.message);
-                return callback(res,true)
-                });
-    
-            }
-    });
+      write_log("regex matched  -------------------")
+
+      const row = db.prepare(`SELECT * FROM urls WHERE url = ?`).get(res["link"]);
+      if(typeof url === "undefined"){
+        db.exec(`INSERT INTO urls VALUES ('${res["link"]}')`)
+        write_log("posted : "+res["title"])
+        callback(res,true)
+        return 
+      }else{
+        write_log("we aleardy posted it ")
+
+        callback(res,false)
+        return 
+      }
+
 } 
 // ===================
 
 
-async function get_data(url,special_urls,callback){
+ function get_data(url,special_urls,callback){
     var post = {};
     request(url,function (error, response, body) {
             try{
@@ -80,13 +90,19 @@ async function get_data(url,special_urls,callback){
                                 let now=Date.now()
 
                                 if((now -date)/(3600*1000)>2){
- 
-                                    return callback({});
+                                    write_log("no new news from :" +url )
+                                     callback({});
+                                     return 
+                                }else{
+                                    write_log("detected new data from :" +url )
                                 }
                             }
                         }
-                
-                        return callback(post);
+                        
+                        write_log("now testing regex:" +url )
+                        callback(post);
+                        return 
+                         
                     }
                 }
             }else {
@@ -110,13 +126,16 @@ async function get_data(url,special_urls,callback){
                                 let now=Date.now()
 
                                 if((now -date)/(3600*1000)>2){
-
-                                    return callback({});
+                                    write_log("no new news from :" +url )
+                                    callback({});
+                                    return 
                                 }
                             }
                         }
-                        
-                        return callback(post);
+                        write_log("detected new data from :" +url )
+                        write_log("now testing regex:" +url )
+                        callback(post);
+                        return 
                     }
                 }
             }
@@ -126,7 +145,8 @@ async function get_data(url,special_urls,callback){
     
 }
 
-async function main (){
+
+function main (){
     let time = 0;
     
     fs.readFile('config.json', 'utf8', (err, data) => {
@@ -144,7 +164,7 @@ async function main (){
           });
           if(data.flag){
             for(let i = 0;i<links.length;i++){
-                get_data(links[i],special_links,function(res){
+                get_data(links[i],special_links, function(res){
                     
                    if (res !={} ){
                    check_url(db,res,regex,function(res,v){
@@ -152,9 +172,8 @@ async function main (){
                        if(v){
                            setTimeout(()=>{
                             Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})
-                            ;console.log("posted :"+res['title'])
                         
-                        },10000*time)
+                        },30000*time)
                            time++;  
                        }
                    });
@@ -165,7 +184,7 @@ async function main (){
           }
         
       });
-   
+   setTimeout(()=>main(),30000)
 
 }
 
