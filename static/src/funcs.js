@@ -97,12 +97,10 @@ async function get_data(url,special_urls,callback){
                                 post["title"]=decode(element[j]['elements'][0]['text'])
                             }
                             if(element[j]["name"] == "pubDate"){
-                                console.log(url )
                                 
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
                                 if((now -date)/(3600*1000)>2){
-                                    console.log('didn"t post')
                                     return callback({});
                                 }
                             }
@@ -121,9 +119,7 @@ async function main (){
     let time = 0;
     fs.readFile('config.json', 'utf8', (err, data) => {
          data = JSON.parse(data)
-         console.log(data)
         let links=data.links;
-        console.log(links)
         let SUB_REDDIT=data.SUB_REDDIT;
         let regex=data.SUB_REDDIT;
         let special_links=data.special_links;
