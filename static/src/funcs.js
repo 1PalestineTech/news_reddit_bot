@@ -15,9 +15,12 @@ const db = new sqlite3.Database("./data.db",sqlite3.OPEN_READWRITE,(err)=>{
 
 // work good ===================
 function check_regex(regexs,text) { 
-      
+    if (regexs.length==0){
+        return true;
+    }
     for(let i=0;i<regexs.length;i++){
-        if(text.search(new RegExp(regexs[i],'i')) != -1){
+        let reg=new RegExp(regexs[i],'i')
+        if(text.search(reg) != -1){
             return true;
         }
     }
@@ -25,11 +28,14 @@ return false
 }
 
 function check_url(db,res,regex, callback) {
+    console.log(regex)
     let title=res['title'];
-    // regex ============================
-    
-    if(typeof title === "undefined" || !check_regex(regex,title)){
+    if(typeof title === "undefined"){
+
             return callback(res,false);
+    }else if(!check_regex(regex,title)){
+
+        return callback(res,false);
     }
     const data=db.all(`SELECT url FROM urls WHERE url = ? `,[res['link']],(err,row)=>{
         if(err) return console.error(err.message);
@@ -67,12 +73,11 @@ async function get_data(url,special_urls,callback){
                             post["title"] = decode(element[j]["elements"][0]["text"] || element[j]["elements"][0]["cdata"]);
                             }
                             if(element[j]["name"] == "pubDate"){
-                                console.log(url )
-                                
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
+
                                 if((now -date)/(3600*1000)>2){
-                                    console.log('didn"t post')
+ 
                                     return callback({});
                                 }
                             }
@@ -100,11 +105,14 @@ async function get_data(url,special_urls,callback){
                                 
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
+
                                 if((now -date)/(3600*1000)>2){
+
                                     return callback({});
                                 }
                             }
                         }
+                        
                         return callback(post);
                     }
                 }
@@ -117,11 +125,13 @@ async function get_data(url,special_urls,callback){
 
 async function main (){
     let time = 0;
+    
     fs.readFile('config.json', 'utf8', (err, data) => {
          data = JSON.parse(data)
+         
         let links=data.links;
         let SUB_REDDIT=data.SUB_REDDIT;
-        let regex=data.SUB_REDDIT;
+        let regex=data.regex;
         let special_links=data.special_links;
         const Bot = new snoowrap({
             userAgent:  data.userAgent ,
@@ -130,13 +140,14 @@ async function main (){
             refreshToken:  data.refreshToken
           });
           if(data.flag){
-            for(let i =0;i<links.length;i++){
+            for(let i = 0;i<links.length;i++){
                 get_data(links[i],special_links,function(res){
+                    
                    if (res !={} ){
                    check_url(db,res,regex,function(res,v){
                        if(v){
                            setTimeout(()=>{
-
+                            
                             Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})
                             ;console.log("posted :"+res['title'])
                         

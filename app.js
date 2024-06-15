@@ -59,20 +59,19 @@ fs.writeFile('./config.json', req.body.conf, err => {
   })
 })
 
+async function run(){
 
-app.listen(3000, function() {
-    console.log("App started on port 3000");
-  });
-  async function run(){
+  main();
 
-    main();
 
-  
-  
-  setTimeout(()=>{
-    run();
-  }
-,120000);
+
+setTimeout(()=>{
+  run();
+}
+,60000);
 }
 console.log("Bot started ============================")
 run();
+app.listen(3000, function() {
+    console.log("App started on port 3000");
+  });

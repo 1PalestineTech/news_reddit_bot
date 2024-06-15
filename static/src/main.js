@@ -1,8 +1,8 @@
 
-const {main,links} = require("./funcs.js");
+const {main} = require("./funcs.js");
 async function run(){
 
-    main(links);
+    main();
 
   
   
