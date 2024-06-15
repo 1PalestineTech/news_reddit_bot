@@ -1,4 +1,5 @@
 const path = require("path");
+const {main} = require("./static/src/funcs.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs=require("fs");
@@ -62,8 +63,16 @@ fs.writeFile('./config.json', req.body.conf, err => {
 app.listen(3000, function() {
     console.log("App started on port 3000");
   });
-async function test(){
-  console.log("test")
-  setTimeout(test,1000);
+  async function run(){
+
+    main();
+
+  
+  
+  setTimeout(()=>{
+    run();
+  }
+,120000);
 }
-test();
+console.log("Bot started ============================")
+run();
