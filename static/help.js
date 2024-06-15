@@ -2,7 +2,7 @@ function Start(){
   
     fetch("./get_data")
 .then(x =>{
-    console.log(x.text().then(o=>{
+    x.text().then(o=>{
         data=JSON.parse(o);
         
         
@@ -16,7 +16,7 @@ function Start(){
     }
 
 
-}))
+})
     
     
 

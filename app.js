@@ -14,6 +14,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get("/", function(req, res) {
     res.render("logger.ejs");
   })
+  app.get("/get_log", function(req, res) {
+    fs.readFile('./logger.txt', 'utf8', (err, data) => {
+      res.send(data);
+    });
+
+  })
 app.get("/config", function(req, res) {
   fs.readFile('./config.json', 'utf8', (err, data) => {
     res.render("config.ejs",{data:data});
@@ -68,7 +74,7 @@ async function run(){
 setTimeout(()=>{
   run();
 }
-,60000);
+,600000);
 }
 console.log("Bot started ============================")
 run();
