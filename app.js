@@ -76,9 +76,14 @@ app.get("/test", function(req, res) {
   res.render("test.ejs",{data:""})
 })
 app.post("/test", function(req, res) {
-  console.log(req.body.link)
   request(req.body.link,function (error, response, body) {
     res.render("test.ejs",{data:body})
+  })
+  
+})
+app.post("/clear_log", function(req, res) {
+  fs.writeFile('./logger.txt', "", err => {
+    res.redirect("/");
   })
   
 })

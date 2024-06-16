@@ -1,5 +1,7 @@
 <%- include('header'); -%>
+<form action="clear_log" method="post">
 <h1 class="display-6 text-white py-2">Logs :</h1>
+<input type="submit" value="clear logg" class="btn warning">
 <div class="form-group">
     <div class="row justify-content-center text-center align-items-center">
         <div class="col-xl-8 col-lg-9 col-md-10 layer-3 aos-init aos-animate" data-aos="fade-up" data-aos-delay="500">
@@ -8,6 +10,7 @@
       </div>
 
 </div>
+</form>
 <script>
     function log_data(){
         let textarea=document.getElementById("logger")
