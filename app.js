@@ -1,5 +1,5 @@
 const path = require("path");
-const {main} = require("./static/src/funcs.js");
+const {main} = require("./src/funcs.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs=require("fs");

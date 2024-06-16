@@ -1,9 +1,7 @@
 
 const convert = require('xml-js');
 const fs = require('fs');
-require('dotenv').config()
 const request = require('request');
-const sqlite3 = require("sqlite3").verbose();
 const snoowrap = require('snoowrap');
 const {decode} =require('html-entities');
 function pause(milliseconds) {
@@ -54,8 +52,9 @@ return false
     }
       write_log("regex matched")
 
-      const row = db.prepare(`SELECT * FROM urls WHERE url = ?`).get(res["link"]);
-      if(typeof url === "undefined"){
+      const row = db.prepare(`SELECT * FROM urls WHERE url = (?)`).get(res["link"]);
+
+      if(typeof row === "undefined"){
         db.exec(`INSERT INTO urls VALUES ('${res["link"]}')`)
         write_log("posted : "+res["title"])
         write_log("=========================================================")
@@ -169,13 +168,14 @@ function main (){
         let SUB_REDDIT=data.SUB_REDDIT;
         let regex=data.regex;
         let special_links=data.special_links;
+        if(data.flag){
         const Bot = new snoowrap({
             userAgent:  data.userAgent ,
             clientId:  data.clientId,
             clientSecret:  data.clientSecret,
             refreshToken:  data.refreshToken
           });
-          
+
             for(let i = 0;i<links.length;i++){ 
                 let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
                 data = JSON.parse(data)
@@ -197,7 +197,7 @@ function main (){
            }
           }
         
-
+        }
    setTimeout(()=>main(),0.5*60*1000)
 
 }
