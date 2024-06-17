@@ -10,8 +10,9 @@ function pause(milliseconds) {
 }
 
  function write_log(val){
+
+    val+="\n================================"
     fs.appendFileSync('./logger.txt', val+"\n", err => {
-    
   });
 }
 
@@ -40,46 +41,41 @@ return false
     let title=res['title'];
     
     if(typeof title === "undefined"){
-            callback(res,false);
-            return 
+        return callback(res,false);
+             
     }else if(!check_regex(regex,title)){
-        write_log("regex didn't match " )
-        pause(150)
-        write_log("=========================================================")
-        pause(150)
-         callback(res,false);
-         return
+        res["log"]+="regex didn't match "  +"\n"
+
+        return callback(res,false);
+
     }
-      write_log("regex matched")
+      res["log"]+="regex matched \n"
+  
 
       const row = db.prepare(`SELECT * FROM urls WHERE url = (?)`).get(res["link"]);
 
       if(typeof row === "undefined"){
         db.exec(`INSERT INTO urls VALUES ('${res["link"]}')`)
-        write_log("posted : "+res["title"])
-        write_log("=========================================================")
-        pause(150)
-        callback(res,true)
-        return 
+        res["log"]+="posted : "+res["title"] +"\n"
+        return callback(res,true)
       }else{
-        write_log("we aleardy posted it ")
-        write_log("=========================================================")
-        pause(150)
-        callback(res,false)
-        return 
+        res["log"]+="we aleardy posted it \n"
+        
+        return callback(res,false)
+         
       }
 
 } 
 // ===================
 
 
- function get_data(url,special_urls,callback){
+ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
     var post = {};
     request(url,function (error, response, body) {
             try{
             var Json = JSON.parse(convert.xml2json(body, {compact: false, spaces: 4}));
             }catch(err){
-                return callback({});
+                return callback({},false);
             }
             if (special_urls.indexOf(url)==-1){
                 elements = Json['elements'][0]['elements'][0]["elements"]
@@ -96,23 +92,21 @@ return false
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
 
-                                if((now -date)/(3600*1000)>2){
-                                    write_log("no new news from :" +url )
-                                    write_log("=========================================================")
-                                    pause(150)
-                                     callback({});
-                                     return 
-                                }else{
-                                    write_log("detected new data from :" +url )
-                                    pause(150)
+                                if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
+                                    write_log("no new news from :" +url);
+
+                                    return callback(post,false);
+                                     
                                 }
+                                    
+                                
                             }
                         }
+                        post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
+                        pause(10)
+
+                        return  callback(post,true);
                         
-                        write_log("now testing regex:" +url )
-                        pause(150)
-                        callback(post);
-                        return 
                          
                     }
                 }
@@ -125,7 +119,7 @@ return false
                             if(element[j]["name"] == "link"){
                                 post["link"] = element[j]["attributes"]["href"]
                                 if(typeof post["title"]  === "undefined"){
-                                post["title"] =decode(element[j]["attributes"]["title"] );
+                                post["title"] = decode(element[j]["attributes"]["title"] );
                                 }
                             }
                             if(element[j]["name"] == "title"){
@@ -135,21 +129,15 @@ return false
                                 
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
-
-                                if((now -date)/(3600*1000)>2){
-                                    write_log("no new news from :" +url )
-                                    write_log("=========================================================")
-                                    pause(150)
-                                    callback({});
-                                    return 
+                                if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
+                                    write_log("no new news from :" +url);
+                                    return callback(post,false);
+                                     
                                 }
                             }
                         }
-                        write_log("detected new data from :" +url )
-                        write_log("now testing regex:" +url )
-                        pause(150)
-                        callback(post);
-                        return 
+                        post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
+                        return callback(post,true);
                     }
                 }
             }
@@ -160,7 +148,7 @@ return false
 }
 
 
-function main (){
+async function main (){
     let time = 0;
     let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
         data = JSON.parse(data)
@@ -168,6 +156,19 @@ function main (){
         let SUB_REDDIT=data.SUB_REDDIT;
         let regex=data.regex;
         let special_links=data.special_links;
+        let max_file_size=data.max_file_size;
+        let time_rang_m=data.time_rang_m
+        let time_rang_h=data.time_rang_h
+        let post_time_s=data.post_time_s;
+        let post_time_m=data.post_time_m;
+
+        var stats = fs.statSync("./logger.txt")
+        var fileSizeInBytes = stats.size;
+        fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+        if(fileSizeInMegabytes>=max_file_size){
+            fs.writeFile('./logger.txt', "", err => {
+              })
+        }
         if(data.flag){
         const Bot = new snoowrap({
             userAgent:  data.userAgent ,
@@ -177,19 +178,23 @@ function main (){
           });
 
             for(let i = 0;i<links.length;i++){ 
+                pause(50)
                 let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
                 data = JSON.parse(data)
                 if(data.flag){
-                get_data(links[i],special_links, function(res){
-                    
-                   if (res !={} ){
+                get_data(links[i],special_links,time_rang_h,time_rang_m, function(res,f){
+                    if(f){
+                       
                    check_url(db,res,regex,function(res,v){
                    
                        if(v){
                            
-                            Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})
-                            pause(200)
+                        setTimeout(()=>{Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
+                    
+                        time++;    
                        }
+                       write_log(res["log"])
+  
                    });
                }
                });
@@ -198,7 +203,7 @@ function main (){
           }
         
         }
-   setTimeout(()=>main(),0.5*60*1000)
+        setTimeout(main,10*1000)
 
 }
 
