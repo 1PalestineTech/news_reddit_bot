@@ -179,9 +179,9 @@ async function main (){
 
             for(let i = 0;i<links.length;i++){ 
                 pause(50)
-                let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
-                data = JSON.parse(data)
-                if(data.flag){
+                let d = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
+                d = JSON.parse(d)
+                if(d.flag){
                 get_data(links[i],special_links,time_rang_h,time_rang_m, function(res,f){
                     if(f){
                         check_url(db,res,regex,function(res,v){
