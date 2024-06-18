@@ -4,23 +4,18 @@ const fs = require('fs');
 const request = require('request');
 const snoowrap = require('snoowrap');
 const {decode} =require('html-entities');
+const db = require('better-sqlite3')('./data.db');
 function pause(milliseconds) {
 	var dt = new Date();
 	while ((new Date()) - dt <= milliseconds) { /* Do nothing */ }
 }
-
- function write_log(val){
-
+function write_log(val,file='./logger.txt'){
+    let dt=new Date()
+    val+="\n"+dt.toLocaleString()
     val+="\n================================"
-    fs.appendFileSync('./logger.txt', val+"\n", err => {
+    fs.appendFileSync(file, val+"\n", err => {
   });
 }
-
-const db = require('better-sqlite3')('./data.db');
-
-
-
-// work good ===================
 function check_regex(regexs,text) { 
     if (regexs.length==0){
         
@@ -36,48 +31,47 @@ function check_regex(regexs,text) {
    
 return false
 }
-
- function check_url(db,res,regex, callback) {
+function check_url(db,res,regex, callback) {
     let title=res['title'];
-    
     if(typeof title === "undefined"){
-        return callback(res,false);
-             
+        return callback(res,false); 
     }else if(!check_regex(regex,title)){
         res["log"]+="regex didn't match "  +"\n"
-
         return callback(res,false);
-
     }
-      res["log"]+="regex matched \n"
-  
-
-      const row = db.prepare(`SELECT * FROM urls WHERE url = (?)`).get(res["link"]);
-
-      if(typeof row === "undefined"){
+    res["log"]+="regex matched \n"
+    const row = db.prepare(`SELECT * FROM urls WHERE url = (?)`).get(res["link"]);
+    if(typeof row === "undefined"){
         db.exec(`INSERT INTO urls VALUES ('${res["link"]}')`)
         res["log"]+="posted : "+res["title"] +"\n"
         return callback(res,true)
       }else{
-        res["log"]+="we aleardy posted it \n"
-        
-        return callback(res,false)
-         
+        res["log"]+="we aleardy posted it \n"    
+        return callback(res,false) 
       }
-
 } 
 // ===================
 
 
- function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
+function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
     var post = {};
     request(url,function (error, response, body) {
             try{
-            var Json = JSON.parse(convert.xml2json(body, {compact: false, spaces: 4}));
+            var Json = JSON.parse(convert.xml2json(body, {compact: false}));
             }catch(err){
+                write_log(err,'./error.txt')
+                write_log("coudl't parse " +url ,'./error.txt')
                 return callback({},false);
             }
             if (special_urls.indexOf(url)==-1){
+                try{
+                    elements = Json['elements'][0]['elements'][0]["elements"]
+                    }catch(err){
+                        write_log(err,'./error.txt')
+                        write_log("problem reading data from:" +url,'./error.txt')
+
+                        return callback({},false);
+                    }
                 elements = Json['elements'][0]['elements'][0]["elements"]
                 for (i in elements){
                     if (elements[i]["name"] == "item" ){
@@ -111,7 +105,14 @@ return false
                     }
                 }
             }else {
-                elements = Json['elements'][0]['elements']
+                try{
+                    elements = Json['elements'][0]['elements']
+                    }catch(err){
+                        write_log(err,'./error.txt')
+                        write_log("problem reading data from:" +url,'./error.txt')
+                        return callback({},false);
+                    }
+                
                 for (i in elements){
                     if (elements[i]["name"] == "entry" ){
                         element = elements[i]["elements"];
@@ -161,7 +162,6 @@ async function main (){
         let time_rang_h=data.time_rang_h
         let post_time_s=data.post_time_s;
         let post_time_m=data.post_time_m;
-
         var stats = fs.statSync("./logger.txt")
         var fileSizeInBytes = stats.size;
         fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
@@ -184,15 +184,11 @@ async function main (){
                 if(data.flag){
                 get_data(links[i],special_links,time_rang_h,time_rang_m, function(res,f){
                     if(f){
-                       
-                   check_url(db,res,regex,function(res,v){
-                   
-                       if(v){
-                           
-                        setTimeout(()=>{Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
-                    
-                        time++;    
-                       }
+                        check_url(db,res,regex,function(res,v){
+                        if(v){ 
+                            setTimeout(()=>{Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
+                            time++;    
+                        }
                        write_log(res["log"])
   
                    });
