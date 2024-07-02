@@ -90,7 +90,7 @@ app.post("/clear_log", function(req, res) {
 
 console.log("Bot started ============================")
 
-app.listen(3000, function() {
+app.listen(5002, function() {
     console.log("App started on port 3000");
   });
   main()
