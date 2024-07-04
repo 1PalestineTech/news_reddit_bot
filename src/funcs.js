@@ -87,7 +87,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                                 let now=Date.now()
 
                                 if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
-                                    write_log("no new news from :" +url);
+                                    write_log("no new news from :" +url,"./"+data.SUB_REDDIT+".txt");
 
                                     return callback(post,false);
                                      
@@ -131,7 +131,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
                                 if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
-                                    write_log("no new news from :" +url);
+                                    write_log("no new news from :" +url,"./"+data.SUB_REDDIT+".txt");
                                     return callback(post,false);
                                      
                                 }
@@ -151,8 +151,10 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
 
 async function main (){
     let time = 0;
-    let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
-        data = JSON.parse(data)
+    let file_data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
+        let file = JSON.parse(file_data)
+
+        for(data of file.instances){
         let links=data.links;
         let SUB_REDDIT=data.SUB_REDDIT;
         let regex=data.regex;
@@ -162,14 +164,10 @@ async function main (){
         let time_rang_h=data.time_rang_h
         let post_time_s=data.post_time_s;
         let post_time_m=data.post_time_m;
-        var stats = fs.statSync("./logger.txt")
-        var fileSizeInBytes = stats.size;
-        fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
-        if(fileSizeInMegabytes>=max_file_size){
-            fs.writeFile('./logger.txt', "", err => {
-              })
-        }
+       
+   
         if(data.flag){
+           
         const Bot = new snoowrap({
             userAgent:  data.userAgent ,
             clientId:  data.clientId,
@@ -181,7 +179,8 @@ async function main (){
                 pause(50)
                 let d = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
                 d = JSON.parse(d)
-                if(d.flag){
+                for (dd of d.instances){
+                if(dd.flag && dd.SUB_REDDIT==SUB_REDDIT){
                 get_data(links[i],special_links,time_rang_h,time_rang_m, function(res,f){
                     if(f){
                         check_url(db,res,regex,function(res,v){
@@ -189,16 +188,30 @@ async function main (){
                             setTimeout(()=>{Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
                             time++;    
                         }
-                       write_log(res["log"])
+                       write_log(res["log"],"./"+data.SUB_REDDIT+".txt")
+                       var stats = fs.statSync("./"+data.SUB_REDDIT+".txt")
+                       try{
+                       var fileSizeInBytes = stats.size;
+                        }catch(e){
+               
+                   }
+                       fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+                       if(fileSizeInMegabytes>=max_file_size){
+               
+                           fs.writeFile("./"+data.SUB_REDDIT+".txt", "", err => {
+                             })
+                       }
   
                    });
                }
                });
            
            }
+        }
           }
         
         }
+    }
         setTimeout(main,10*1000)
 
 }

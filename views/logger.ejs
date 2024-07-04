@@ -10,6 +10,14 @@
 <div class="form-group">
     <div class="row justify-content-center text-center align-items-center">
         <div class="col-xl-8 col-lg-9 col-md-10 layer-3 aos-init aos-animate" data-aos="fade-up" data-aos-delay="500">
+            <ul>
+                <% subs.forEach(function(sub) { %>
+                    <form method="post" action="./setcookie">
+                    <input type="hidden" name="filename" value=<%= sub %>>
+                    <button type="button" class="btn btn-secondary btn-lg"><%= sub %> </button>
+                    </form>
+                <% }); %> 
+               </ul>
             <textarea class="form-control bg-secondary text-light"  name="conf" id = "logger" rows="30" disabled></textarea>
         </div>
       </div>
