@@ -26,6 +26,7 @@
 
 </div>
 </form>
+<h1 id="title"></h1>
 <script>
     function log_data(){
         let textarea=document.getElementById("logger")
@@ -35,5 +36,13 @@
         setTimeout(log_data,5*60*1000)
     }
     log_data();
+    function title(){
+    document.onload(()=>{
+
+        let title=document.getElementById("title")
+        title.innerText=getCookie("file");
+    })
+        }
+        title();
 </script>
 <%- include('footer'); -%>

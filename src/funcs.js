@@ -38,17 +38,17 @@ function check_url(db,res,regex,sub, callback) {
         return callback(res,false); 
     }else if(!check_regex(regex,title)){
         res["log"]+="regex didn't match "  +"\n"
-        return callback(res,false);
+        return callback(res,false,sub);
     }
     res["log"]+="regex matched \n"
     const row = db.prepare(`SELECT * FROM urls WHERE url = (?) AND sub=(?)`).get(res["link"],sub);
     if(typeof row === "undefined"){
         db.exec(`INSERT INTO urls VALUES ('${res["link"]}','${sub}')`)
         res["log"]+="posted : "+res["title"] +"\n"
-        return callback(res,true)
+        return callback(res,true,sub)
       }else{
         res["log"]+="we aleardy posted it \n"    
-        return callback(res,false) 
+        return callback(res,false,sub) 
       }
 } 
 // ===================
@@ -153,9 +153,8 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,sub,callback){
 async function main (){
     let time = 0;
     /* */
-    let file_data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
+        let file_data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
         let file = JSON.parse(file_data)
-
         for(data of file.instances){
         let links=data.links;
         let SUB_REDDIT=data.SUB_REDDIT;
@@ -183,7 +182,7 @@ async function main (){
                 if(data.flag ){
                 get_data(links[i],special_links,time_rang_h,time_rang_m,SUB_REDDIT, function(res,f,sub){
                     if(f){
-                        check_url(db,res,regex,sub,function(res,v){
+                        check_url(db,res,regex,sub,function(res,v,sub){
                         if(v){ 
                             setTimeout(()=>{Bot.getSubreddit(sub).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
                             time++;    
