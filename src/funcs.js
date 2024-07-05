@@ -19,6 +19,7 @@ function write_log(val,file='./logger.txt'){
 function check_regex(regexs,text) { 
     if (regexs.length==0){
         
+        
         return true;
     }
     for(let i=0;i<regexs.length;i++){
@@ -212,7 +213,7 @@ async function main (){
         
     }
     /**/
-        setTimeout(main,10*1000)
+        setTimeout(main,5*60*1000)
 
 }
 
