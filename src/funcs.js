@@ -31,7 +31,7 @@ function check_regex(regexs,text) {
    
 return false
 }
-function check_url(db,res,regex, callback) {
+function check_url(db,res,regex,sub, callback) {
     let title=res['title'];
     if(typeof title === "undefined"){
         return callback(res,false); 
@@ -40,9 +40,9 @@ function check_url(db,res,regex, callback) {
         return callback(res,false);
     }
     res["log"]+="regex matched \n"
-    const row = db.prepare(`SELECT * FROM urls WHERE url = (?)`).get(res["link"]);
+    const row = db.prepare(`SELECT * FROM urls WHERE url = (?) AND sub=(?)`).get(res["link"],sub);
     if(typeof row === "undefined"){
-        db.exec(`INSERT INTO urls VALUES ('${res["link"]}')`)
+        db.exec(`INSERT INTO urls VALUES ('${res["link"]}','${sub}')`)
         res["log"]+="posted : "+res["title"] +"\n"
         return callback(res,true)
       }else{
@@ -53,7 +53,7 @@ function check_url(db,res,regex, callback) {
 // ===================
 
 
-function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
+function get_data(url,special_urls,time_rang_h,time_rang_m,sub,callback){
     var post = {};
     request(url,function (error, response, body) {
             try{
@@ -61,7 +61,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
             }catch(err){
                 write_log(err,'./error.txt')
                 write_log("coudl't parse " +url ,'./error.txt')
-                return callback({},false);
+                return callback({},false,sub);
             }
             if (special_urls.indexOf(url)==-1){
                 try{
@@ -70,7 +70,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                         write_log(err,'./error.txt')
                         write_log("problem reading data from:" +url,'./error.txt')
 
-                        return callback({},false);
+                        return callback({},false,sub);
                     }
                 elements = Json['elements'][0]['elements'][0]["elements"]
                 for (i in elements){
@@ -87,9 +87,9 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                                 let now=Date.now()
 
                                 if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
-                                    write_log("no new news from :" +url,"./"+data.SUB_REDDIT+".txt");
+                                    write_log("no new news from :" +url,"./"+sub+".txt");
 
-                                    return callback(post,false);
+                                    return callback(post,false,sub);
                                      
                                 }
                                     
@@ -99,7 +99,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                         post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
                         pause(10)
 
-                        return  callback(post,true);
+                        return  callback(post,true,sub);
                         
                          
                     }
@@ -110,7 +110,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                     }catch(err){
                         write_log(err,'./error.txt')
                         write_log("problem reading data from:" +url,'./error.txt')
-                        return callback({},false);
+                        return callback({},false,sub);
                     }
                 
                 for (i in elements){
@@ -131,14 +131,14 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
                                 let date=new Date(element[j]["elements"][0]["text"])
                                 let now=Date.now()
                                 if((now -date)/1000>(time_rang_h*60+time_rang_m)*60){
-                                    write_log("no new news from :" +url,"./"+data.SUB_REDDIT+".txt");
-                                    return callback(post,false);
+                                    write_log("no new news from :" +url,"./"+sub+".txt");
+                                    return callback(post,false,sub);
                                      
                                 }
                             }
                         }
                         post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
-                        return callback(post,true);
+                        return callback(post,true,sub);
                     }
                 }
             }
@@ -151,6 +151,7 @@ function get_data(url,special_urls,time_rang_h,time_rang_m,callback){
 
 async function main (){
     let time = 0;
+    /* */
     let file_data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
         let file = JSON.parse(file_data)
 
@@ -177,30 +178,28 @@ async function main (){
 
             for(let i = 0;i<links.length;i++){ 
                 pause(50)
-                let d = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
-                d = JSON.parse(d)
-                for (dd of d.instances){
-                if(dd.flag && dd.SUB_REDDIT==SUB_REDDIT){
-                get_data(links[i],special_links,time_rang_h,time_rang_m, function(res,f){
+
+                if(data.flag ){
+                get_data(links[i],special_links,time_rang_h,time_rang_m,SUB_REDDIT, function(res,f,sub){
                     if(f){
-                        check_url(db,res,regex,function(res,v){
+                        check_url(db,res,regex,sub,function(res,v){
                         if(v){ 
-                            setTimeout(()=>{Bot.getSubreddit(SUB_REDDIT).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
+                            setTimeout(()=>{Bot.getSubreddit(sub).submitLink({title: res['title'], url: res['link']})},(post_time_s+post_time_m*60)*1000*time)
                             time++;    
                         }
-                       write_log(res["log"],"./"+data.SUB_REDDIT+".txt")
-                       var stats = fs.statSync("./"+data.SUB_REDDIT+".txt")
+                       write_log(res["log"],"./"+sub+".txt")
+                       let stats = fs.statSync("./"+sub+".txt")
                        try{
-                       var fileSizeInBytes = stats.size;
-                        }catch(e){
-               
-                   }
-                       fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+                       let fileSizeInBytes = stats.size;
+                       let fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
                        if(fileSizeInMegabytes>=max_file_size){
                
-                           fs.writeFile("./"+data.SUB_REDDIT+".txt", "", err => {
+                           fs.writeFile("./"+sub+".txt", "", err => {
                              })
                        }
+                        }catch(e){
+                   }
+                       
   
                    });
                }
@@ -210,8 +209,9 @@ async function main (){
         }
           }
         
-        }
+        
     }
+    /**/
         setTimeout(main,10*1000)
 
 }

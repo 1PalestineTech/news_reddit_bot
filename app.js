@@ -1,3 +1,4 @@
+//            IMPORTS
 const path = require("path");
 const cookieParser = require('cookie-parser');
 const {main} = require("./src/funcs.js");
@@ -5,33 +6,43 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs=require("fs");
 const app=express()
-
 const request = require('request');
+//           CONFIG
 app.use(cookieParser());
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 var staticPath = path.join(__dirname, "static");
 app.use(express.static(staticPath));
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+// bot
 app.get("/", function(req, res) {
   let d = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
   d = JSON.parse(d)
   let subs=[];
   for (let sub of d.instances ){
-    subs.push(SUB_REDDIT);
+    subs.push(sub.SUB_REDDIT);
   }
   
     res.render("logger.ejs",{subs:subs});
-  })
-  app.post('/setcookie', function (req, res) {
-
+})
+app.post('/setcookie', function (req, res) {
     res.cookie('file', req.body.filename);
     res.redirect("/");
 })
   app.get("/get_log", function(req, res) {
-    fs.readFile('./'+req.cookies.file +'.txt', 'utf8', (err, data) => {
-     
-      res.send(data.split("\n").reverse().join("\n"));
+    let filename=req.cookies.file|| 'error'
+    
+    fs.readFile('./'+filename +'.txt', 'utf8', (err, data) => {
+      try{
+        element=data.split("\n").reverse().join("\n") 
+      }
+      catch{
+        element=""
+      }
+      res.send(element);
     });
 
   })
@@ -63,12 +74,13 @@ fs.writeFile('./config.json', req.body.conf, err => {
 
   app.post("/set_bot", function(req, res) {
     let data = fs.readFileSync('./config.json', { encoding: 'utf8', flag: 'r' });
-      data = JSON.parse(d);
+      data = JSON.parse(data);
         
           if (req.body.bot_data=="start"){
             for (e of data.instances){
               if(e.SUB_REDDIT==req.cookies.file){
                 e.flag=true;
+                
                 let output=JSON.stringify(data).replaceAll(',',',\n');
                 fs.writeFile('./config.json', output, err => {
                   if (err) {
@@ -89,7 +101,7 @@ fs.writeFile('./config.json', req.body.conf, err => {
           }else{
             for (e of data.instances){
               if(e.SUB_REDDIT==req.cookies.file){
-                e.flag==false;
+                e.flag=false;
                 let output=JSON.stringify(data).replaceAll(',',',\n');
                 fs.writeFile('./config.json', output, err => {
                   if (err) {
@@ -128,6 +140,6 @@ app.post("/clear_log", function(req, res) {
 console.log("Bot started ============================")
 
 app.listen(3000, function() {
-    console.log("App started on port 5000");
+    console.log("App started on port 3000");
   });
   main()

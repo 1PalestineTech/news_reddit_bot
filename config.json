@@ -1,21 +1,2 @@
-{
-
-"instances":[
-    {
-        "userAgent":"",
-        "clientId":"",
-        "clientSecret":"",
-        "refreshToken":"",
-        "SUB_REDDIT":"loog",
-        "regex":[],
-        "links":[],
-        "special_links":[],
-        "max_file_size":1,
-        "post_time_s":0,
-        "post_time_m":2,
-        "time_rang_m":0,
-        "time_rang_h":2,
-        "flag":false
-    }
-]
+{"instances":[]
 }
