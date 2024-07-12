@@ -39,6 +39,7 @@ def check_url(db,res,regex):
     rows = cursor.fetchall()
     if len(rows) == 0:
         cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],sub))       
+        cursor.commit()
         res["log"]+="posted : "+res["title"] +"\n"
         return (res,True)
     else:
