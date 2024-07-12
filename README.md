@@ -10,4 +10,12 @@ clientId = 'your client id'
 clientSecret = 'your clientsecret'
 refreshToken = 'your refrech token'
 ```
+if you can post only specified titles use regex  
+
+links is for where you will get news 
+
+time range used so if news older then this range it will not get posted
+
+post time the break between each post
+
 
