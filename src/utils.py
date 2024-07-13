@@ -10,17 +10,12 @@ import json
 import praw
 import threading
 import os
-db=sqlite3.connect('../data.db')
-def print_L():
-    cursor = db.execute("SELECT * FROM urls")
-    row=cursor.fetchall()
-    print(row)
-
 def write_log(val,file = './logger.txt'):
-    with open(file,'a') as f:
-        f.seek(0)
-        f.write(val + "\n" + str(datetime.datetime.now()) + "\n================================ \n")
-
+    val+="\n" + str(datetime.datetime.now()) + "\n================================ \n"
+    with open(file, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(val.rstrip('\r\n') + '\n' + content)
 def check_regex(regexs,text):
     if len(regexs) == 0:
         return True
@@ -28,7 +23,7 @@ def check_regex(regexs,text):
         if bool(re.search(regex,text,flags = re.IGNORECASE)):
             return True
     return False
-def check_url(db,res,regex):
+def check_url(db,res,regex,sub):
     title = res['title']
     if not check_regex(regex,title):
         res["log"] += "regex didn't match "  +"\n"
@@ -38,8 +33,8 @@ def check_url(db,res,regex):
     cursor = db.execute("SELECT * FROM urls WHERE url = (?) AND sub=(?)",(res["link"],sub))
     rows = cursor.fetchall()
     if len(rows) == 0:
-        cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],sub))       
-        cursor.commit()
+        cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],sub))    
+        db.commit()   
         res["log"]+="posted : "+res["title"] +"\n"
         return (res,True)
     else:
@@ -61,13 +56,13 @@ def get_data(url,time_rang_h,time_rang_m,sub):
     if len(data)>1:
         post["title"] = data[0].findAll('title')[0].text
         post["link"] = data[0].findAll('link')[0].attrs['href']
-        date = data['feed']['entry'][0]['published']
+        date = data[0].findAll('published')[0].text 
 
     else:
         data = prased.findAll('item')
         post["title"] = data[0].findAll('title')[0].text
         post["link"] = data[0].findAll('link')[0].text
-        date = data['rss']['channel']['item'][0]['pubDate']
+        date = data[0].findAll('pubDate')[0].text 
     date = time.mktime(parser.parse(date).timetuple())
     if (now - date) >(time_rang_h*60+time_rang_m)*60:
         write_log("no new news from :" +url,"./"+sub+".txt")
@@ -81,6 +76,7 @@ def url_test(url):
     'referer':'https://www.google.com/'
     }
     post = {}
+
     try:
         prased = bs.BeautifulSoup(rq.get(url,headers=header).text, "xml")
     except:
@@ -97,8 +93,10 @@ def url_test(url):
     return str(post)
 
 def tread(instance):
+    db=sqlite3.connect('data.db')
     links = instance['links']
     SUB_REDDIT = instance['SUB_REDDIT']
+    print(SUB_REDDIT)
     regex = instance['regex']
     max_file_size = instance['max_file_size']
     time_rang_m = instance['time_rang_m']
@@ -118,7 +116,7 @@ def tread(instance):
         for link in links:
             re,f = get_data(link,time_rang_h,time_rang_m,SUB_REDDIT)
             if f:
-                re,f = check_url(db,re,regex)
+                re,f = check_url(db,re,regex,SUB_REDDIT)
                 if f:
                     reddit.subreddit(SUB_REDDIT).submit(re['title'], url=re['link'])
                     sleep(post_time_s+post_time_m*60)
@@ -134,11 +132,9 @@ def main():
         with open('./config.json', 'r') as f:
             config = json.load(f)
         threads=[]
-        i=0
         for instance in config['instances']:
             threads.append(threading.Thread(target=tread, args=(instance,)))
         for th in threads:
             th.start()
             th.join()
         sleep(60*5)
-
