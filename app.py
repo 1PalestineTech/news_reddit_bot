@@ -1,14 +1,10 @@
 
-from src.utils import main,url_test
+from src.utils import main,url_test,write_log
 from flask import Flask, render_template,make_response,request,redirect
 import json
 import threading
 app = Flask(__name__)
-def line_prepender(filename, line):
-    with open(filename, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write(line.rstrip('\r\n') + '\n' + content)
+
 @app.route('/',methods = ['GET'])
 def index():
     with open('./config.json', 'r') as f:
@@ -90,7 +86,7 @@ def set_bot():
                 text =  "================ bot stopped    =============\n"
     with open('./config.json', 'w') as out_file:
         json.dump(data, out_file, indent = 6)
-    line_prepender('./'+request.cookies.get('file') +'.txt', text)
+    write_log( text,'./'+request.cookies.get('file') +'.txt')
     return redirect('/')
 def start_server():
     app.run(host='0.0.0.0',port = "3080")

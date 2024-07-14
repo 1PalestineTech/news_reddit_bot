@@ -13,10 +13,12 @@ import os
 import html
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now()) + "\n================================ \n"
-    with open(file, 'r+') as f:
+
+    with open(file, 'w+') as f:
         content = f.read()
-        f.seek(0, 0)
+
         f.write(val.rstrip('\r\n') + '\n' + content)
+    
 def check_regex(regexs,text):
     if len(regexs) == 0:
         return True
@@ -126,6 +128,7 @@ def tread(instance):
                     if file_stats.st_size / (1024 * 1024)>=max_file_size:
                             with open('./' + SUB_REDDIT +'.txt', 'w') as f:
                                 f.write('')
+        
 
 
 def main():
@@ -138,4 +141,5 @@ def main():
         for th in threads:
             th.start()
             th.join()
-        sleep(60*5)
+        sleep(60*2)
+
