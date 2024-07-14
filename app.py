@@ -64,9 +64,10 @@ def clear_log():
 @app.route('/test', methods = ['GET', 'POST']) 
 def test_link():
     if request.method == 'POST':
-        
-        data = url_test(request.form.get('link'))
-
+        try:
+            data = url_test(request.form.get('link'))
+        except:
+            data = "error link not working"
         return render_template('test.html',data = data)
     else:
         return render_template('test.html',data = '')
