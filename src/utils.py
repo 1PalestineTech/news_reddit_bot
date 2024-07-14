@@ -145,6 +145,7 @@ def main():
             threads.append(threading.Thread(target=tread, args=(instance,)))
         for th in threads:
             th.start()
+        for th in threads:
             th.join()
         sleep(60*2)
 
