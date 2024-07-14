@@ -10,6 +10,7 @@ import json
 import praw
 import threading
 import os
+import html
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now()) + "\n================================ \n"
     with open(file, 'r+') as f:
@@ -83,12 +84,12 @@ def url_test(url):
         return  "error link not working"
     data = prased.findAll('entry')
     if len(data)>1:
-        post["title"] = data[0].findAll('title')[0].text
+        post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].attrs['href']
 
     else:
         data = prased.findAll('item')
-        post["title"] = data[0].findAll('title')[0].text
+        post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].text
     return str(post)
 

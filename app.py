@@ -29,10 +29,10 @@ def setcookie():
 def get_log(): 
     try:
         filename = request.cookies.get('file') 
+        with open('./'+filename +'.txt', 'r') as f:
+            data = f.read()
     except:
-        filename = 'logger'
-    with open('./'+filename +'.txt', 'r') as f:
-        data = f.read()
+        data = ''
     return data
 
 
