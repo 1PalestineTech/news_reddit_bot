@@ -11,13 +11,18 @@ import praw
 import threading
 import os
 import html
+import os.path
+
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now()) + "\n================================ \n"
-
-    with open(file, 'w+') as f:
-        content = f.read()
-
-        f.write(val.rstrip('\r\n') + '\n' + content)
+    if os.path.isfile(file):
+        with open(file, 'r+') as f:
+            content = f.read()
+            f.seek(0)
+            f.write(val.rstrip('\r\n') + '\n' + content)
+    else:
+        with open(file, 'w') as f:
+            f.write(val.rstrip('\r\n')  )
     
 def check_regex(regexs,text):
     if len(regexs) == 0:
