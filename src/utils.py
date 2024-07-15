@@ -70,7 +70,10 @@ def get_data(url,time_rang_h,time_rang_m,sub):
         data = prased.findAll('item')
         post["title"] = data[0].findAll('title')[0].text
         post["link"] = data[0].findAll('link')[0].text
-        date = data[0].findAll('pubDate')[0].text 
+        try:
+            date = data[0].findAll('pubDate')[0].text 
+        except:
+            post["date"] = data[0].findAll('dc:date')[0].text 
     date = time.mktime(parser.parse(date).timetuple())
     if (now - date) >(time_rang_h*60+time_rang_m)*60:
         write_log("no new news from :" +url,"./"+sub+".txt")
@@ -93,18 +96,21 @@ def url_test(url):
     if len(data)>1:
         post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].attrs['href']
-
+        post["date"]= data[0].findAll('published')[0].text 
     else:
         data = prased.findAll('item')
         post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].text
+        try :
+            post["date"] = data[0].findAll('pubDate')[0].text 
+        except:
+            post["date"] = data[0].findAll('dc:date')[0].text 
     return str(post)
 
 def tread(instance):
     db=sqlite3.connect('data.db')
     links = instance['links']
     SUB_REDDIT = instance['SUB_REDDIT']
-    print(SUB_REDDIT)
     regex = instance['regex']
     max_file_size = instance['max_file_size']
     time_rang_m = instance['time_rang_m']
@@ -122,17 +128,22 @@ def tread(instance):
     refresh_token = refreshToken,
     user_agent = userAgent,)
         for link in links:
-            re,f = get_data(link,time_rang_h,time_rang_m,SUB_REDDIT)
-            if f:
-                re,f = check_url(db,re,regex,SUB_REDDIT)
+            try:
+                re,f = get_data(link,time_rang_h,time_rang_m,SUB_REDDIT)
                 if f:
-                    reddit.subreddit(SUB_REDDIT).submit(re['title'], url=re['link'])
-                    sleep(post_time_s+post_time_m*60)
-                    write_log(re["log"],"./"+SUB_REDDIT+".txt")
-                    file_stats = os.stat("./"+SUB_REDDIT+".txt")
-                    if file_stats.st_size / (1024 * 1024)>=max_file_size:
-                            with open('./' + SUB_REDDIT +'.txt', 'w') as f:
-                                f.write('')
+                    re,f = check_url(db,re,regex,SUB_REDDIT)
+                    if f:
+                        reddit.subreddit(SUB_REDDIT).submit(re['title'], url=re['link'])
+                        sleep(post_time_s+post_time_m*60)
+                        write_log(re["log"],"./"+SUB_REDDIT+".txt")
+                        file_stats = os.stat("./"+SUB_REDDIT+".txt")
+                        if file_stats.st_size / (1024 * 1024)>=max_file_size:
+                                with open('./' + SUB_REDDIT +'.txt', 'w') as f:
+                                    f.write('')
+            except:
+                pass
+           
+
         
 
 
