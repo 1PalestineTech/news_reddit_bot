@@ -18,7 +18,7 @@ function Start(){
     fetch("./get_data")
 .then(x =>{
     x.text().then(o=>{
-        data=JSON.parse(o);
+        data=JSON5.parse(o);
 
         for(e of data.instances){
             
@@ -41,7 +41,7 @@ function Stop(){
         fetch("./get_data")
     .then(x =>{
         x.text().then(o=>{
-            data=JSON.parse(o);
+            data=JSON5.parse(o);
             for(e of data.instances){
             
                 if(e.SUB_REDDIT==getCookie("file") && e.flag==false){

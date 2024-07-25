@@ -6,7 +6,7 @@ import requests as rq
 import time
 from dateutil import parser
 import bs4 as bs
-import json
+import jsonc
 import praw
 import threading
 import os
@@ -150,7 +150,7 @@ def tread(instance):
 def main():
     while True:
         with open('./config.json', 'r') as f:
-            config = json.load(f)
+            config = jsonc.load(f)
         threads=[]
         for instance in config['instances']:
             threads.append(threading.Thread(target=tread, args=(instance,)))
