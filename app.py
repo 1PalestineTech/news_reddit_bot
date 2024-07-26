@@ -1,14 +1,14 @@
 
 from src.utils import main,url_test,write_log
 from flask import Flask, render_template,make_response,request,redirect
-import jsonc
+import json
 import threading
 app = Flask(__name__)
 
 @app.route('/',methods = ['GET'])
 def index():
     with open('./config.json', 'r') as f:
-        data = jsonc.load(f)
+        data = json.load(f)
     subs = []
 
     for sub in data['instances'] :
@@ -76,7 +76,7 @@ def test_link():
 @app.route('/set_bot', methods=['POST']) 
 def set_bot():
     with open('./config.json', 'r') as f:
-        data = jsonc.load(f)
+        data = json.load(f)
     for e in data['instances']:
         if e['SUB_REDDIT'] == request.cookies.get('file') :
             if request.form.get('bot_data') == "start":
@@ -86,14 +86,14 @@ def set_bot():
                 e['flag'] = False
                 text =  "================ bot stopped    =============\n"
     with open('./config.json', 'w') as out_file:
-        jsonc.dump(data, out_file, indent = 6)
+        json.dump(data, out_file, indent = 6)
     write_log( text,'./'+request.cookies.get('file') +'.txt')
     return redirect('/')
 def start_server():
-    app.run(host='0.0.0.0',port = "3080")
+    app.run(host='0.0.0.0',port="3080")
 
 if __name__ == '__main__':
-   print("App started on port 3080")
+   print("App started")
    
    server = threading.Thread(target = start_server)
    bot = threading.Thread(target = main)

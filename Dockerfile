@@ -4,7 +4,9 @@ WORKDIR /app
 COPY . /app
 RUN pip install -r requirements.txt
 EXPOSE 3000
+ENTRYPOINT [ "python" ]
+
+ENV TZ="Asia/Jerusalem"
 
 
-
-CMD ["flask run"]
+CMD [ "app.py" ]
