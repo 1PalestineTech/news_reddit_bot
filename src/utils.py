@@ -62,13 +62,13 @@ def get_data(url,time_rang_h,time_rang_m,sub):
         return (post,False)
     data = prased.findAll('entry')
     if len(data)>1:
-        post["title"] = data[0].findAll('title')[0].text
+        post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].attrs['href']
         date = data[0].findAll('published')[0].text 
 
     else:
         data = prased.findAll('item')
-        post["title"] = data[0].findAll('title')[0].text
+        post["title"] = html.unescape(data[0].findAll('title')[0].text)
         post["link"] = data[0].findAll('link')[0].text
         try:
             date = data[0].findAll('pubDate')[0].text 
@@ -127,7 +127,7 @@ def tread(instance):
     client_secret = clientSecret,
     refresh_token = refreshToken,
     user_agent = userAgent,)
-        for link in links:
+        for link in links.keys():
             try:
                 re,f = get_data(link,time_rang_h,time_rang_m,SUB_REDDIT)
                 if f:
