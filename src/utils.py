@@ -12,9 +12,10 @@ import threading
 import os
 import html
 import os.path
-
+import pytz
+TIME_ZONE = os.environ['time_zone']
 def write_log(val,file = './logger.txt'):
-    val+="\n" + str(datetime.datetime.now()) + "\n================================ \n"
+    val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
     if os.path.isfile(file):
         with open(file, 'r+') as f:
             content = f.read()

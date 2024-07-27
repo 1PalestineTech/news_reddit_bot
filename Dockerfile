@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 EXPOSE 3000
 ENTRYPOINT [ "python" ]
 
-ENV TZ="Asia/Jerusalem"
+ENV time_zone="Asia/Jerusalem"
 
 
 CMD [ "app.py" ]
