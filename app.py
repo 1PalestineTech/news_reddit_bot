@@ -9,11 +9,11 @@ app = Flask(__name__)
 def index():
     with open('./config.json', 'r') as f:
         data = json.load(f)
-    subs = []
+    instances = []
 
-    for sub in data['instances'] :
-        subs.append(sub['SUB_REDDIT'])
-    return render_template("logger.html",subs = subs)
+    for instance in data['instances'] :
+        instances.append(instance['name'])
+    return render_template("logger.html",instances = instances)
 
 @app.route('/setcookie', methods = ['POST']) 
 def setcookie(): 
@@ -78,7 +78,7 @@ def set_bot():
     with open('./config.json', 'r') as f:
         data = json.load(f)
     for e in data['instances']:
-        if e['SUB_REDDIT'] == request.cookies.get('file') :
+        if e['name'] == request.cookies.get('file') :
             if request.form.get('bot_data') == "start":
                 e['flag'] = True
                 text = "================ bot started    =============\n"

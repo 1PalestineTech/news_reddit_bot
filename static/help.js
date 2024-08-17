@@ -22,11 +22,11 @@ function Start(){
 
         for(e of data.instances){
             
-                if(e.SUB_REDDIT==getCookie("file") && e.flag==true){
+                if(e.name==getCookie("file") && e.flag==true){
                     alert("Bot is ON")
                     break;
                 }
-            else if(e.SUB_REDDIT==getCookie("file") && e.flag==false){
+            else if(e.name==getCookie("file") && e.flag==false){
                 let flag=document.getElementById("bot_data")
                 flag.value='start'
                 document.getElementById("bot_form").submit();
@@ -44,11 +44,11 @@ function Stop(){
             data=JSON.parse(o);
             for(e of data.instances){
             
-                if(e.SUB_REDDIT==getCookie("file") && e.flag==false){
+                if(e.name==getCookie("file") && e.flag==false){
                     alert("Bot is OFF")
                     break;
                 }
-            else if(e.SUB_REDDIT==getCookie("file") && e.flag==true){
+            else if(e.name==getCookie("file") && e.flag==true){
                 let flag=document.getElementById("bot_data")
                 flag.value='stop'
                 document.getElementById("bot_form").submit();

@@ -13,6 +13,7 @@ import os
 import html
 import os.path
 import pytz
+import tweepy
 TIME_ZONE = os.environ['time_zone']
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
@@ -32,17 +33,17 @@ def check_regex(regexs,text):
         if bool(re.search(regex,text,flags = re.IGNORECASE)):
             return True
     return False
-def check_url(db,res,regex,sub):
+def check_url(db,res,regex,name):
     title = res['title']
     if not check_regex(regex,title):
         res["log"] += "regex didn't match "  +"\n"
         return (res,False)
     else:
         res["log"] += "regex matched \n"
-    cursor = db.execute("SELECT * FROM urls WHERE url = (?) AND sub=(?)",(res["link"],sub))
+    cursor = db.execute("SELECT * FROM urls WHERE url = (?) AND sub=(?)",(res["link"],name))
     rows = cursor.fetchall()
     if len(rows) == 0:
-        cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],sub))    
+        cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],name))    
         db.commit()   
         res["log"]+="posted : "+res["title"] +"\n"
         return (res,True)
@@ -50,7 +51,7 @@ def check_url(db,res,regex,sub):
         res["log"]+="we aleardy posted it \n" 
         return (res,False)
 
-def get_data(url,time_rang_h,time_rang_m,sub):
+def get_data(url,time_rang_h,time_rang_m,name):
     header = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,
     'referer':'https://www.google.com/'
@@ -75,9 +76,12 @@ def get_data(url,time_rang_h,time_rang_m,sub):
             date = data[0].findAll('pubDate')[0].text 
         except:
             post["date"] = data[0].findAll('dc:date')[0].text 
+    p_date=date
     date = time.mktime(parser.parse(date).timetuple())
-    if (now - date) >(time_rang_h*60+time_rang_m)*60:
-        write_log("no new news from :" +url,"./"+sub+".txt")
+    if (now - date) > 0 and (now - date) > (time_rang_h*60+time_rang_m)*60:
+        write_log("no new news from :" +url+"\n last news was at  :" +p_date,"./"+name+".txt")
+
+         
         return (post,False)
     post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
     return (post,True)
@@ -110,19 +114,22 @@ def url_test(url):
 
 def tread(instance):
     db=sqlite3.connect('data.db')
+    name=instance['name']
+    instance_type=instance['instance_type']
     links = instance['links']
-    SUB_REDDIT = instance['SUB_REDDIT']
     regex = instance['regex']
     max_file_size = instance['max_file_size']
     time_rang_m = instance['time_rang_m']
     time_rang_h = instance['time_rang_h']
     post_time_s = instance['post_time_s']
     post_time_m = instance['post_time_m']
-    userAgent = instance['userAgent']
-    clientId = instance['clientId']
-    clientSecret = instance['clientSecret']
-    refreshToken = instance['refreshToken']
-    if instance['flag']:
+
+    if instance['flag'] and instance_type=='reddit':
+        userAgent = instance['userAgent']
+        clientId = instance['clientId']
+        clientSecret = instance['clientSecret']
+        refreshToken = instance['refreshToken']
+        subs = instance['SUB_REDDIT']
         reddit = praw.Reddit(
     client_id = clientId,
     client_secret = clientSecret,
@@ -130,19 +137,69 @@ def tread(instance):
     user_agent = userAgent,)
         for link in links.keys():
             try:
-                re,f = get_data(link,time_rang_h,time_rang_m,SUB_REDDIT)
+                re,f = get_data(link,time_rang_h,time_rang_m,name)
                 if f:
-                    re,f = check_url(db,re,regex,SUB_REDDIT)
+                    re,f = check_url(db,re,regex,name)
                     if f:
-                        reddit.subreddit(SUB_REDDIT).submit(re['title'], url=re['link'])
+                        for sub in subs:
+                            reddit.subreddit(sub).submit(re['title'], url=re['link'])
                         sleep(post_time_s+post_time_m*60)
-                        write_log(re["log"],"./"+SUB_REDDIT+".txt")
-                        file_stats = os.stat("./"+SUB_REDDIT+".txt")
+                        write_log(re["log"],"./"+name+".txt")
+                        file_stats = os.stat("./"+name+".txt")
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
-                                with open('./' + SUB_REDDIT +'.txt', 'w') as f:
+                                with open('./' + name +'.txt', 'w') as f:
                                     f.write('')
             except:
                 pass
+    elif instance['flag'] and instance_type=='twitter':
+
+        CONSUMER_KEY = instance['CONSUMER_KEY']
+        CONSUMER_SECRET = instance['CONSUMER_SECRET']
+        ACCESS_KEY = instance['ACCESS_KEY']
+        ACCESS_SECRET = instance['ACCESS_SECRET']
+        BEARER_TOKEN = instance['BEARER_TOKEN']
+
+        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+        auth.set_access_token(
+        ACCESS_KEY,
+        ACCESS_SECRET,
+        )
+        newapi = tweepy.Client(
+        bearer_token=BEARER_TOKEN,
+        access_token=ACCESS_KEY,
+        access_token_secret=ACCESS_SECRET,
+        consumer_key=CONSUMER_KEY,
+        consumer_secret=CONSUMER_SECRET,
+         )
+        api = tweepy.API(auth)
+        tags = " ".join(instance['tags'])
+        
+        for link in links.keys():
+            try:
+                re,f = get_data(link,time_rang_h,time_rang_m,name)
+                if f:
+                    re,f = check_url(db,re,regex,name)
+                    if f:
+                        
+                        sampletweet=f"""
+{re['title']}
+
+{tags}
+
+
+{re['link']}
+"""
+                        post_result = newapi.create_tweet(text=sampletweet)
+                        sleep(post_time_s+post_time_m*60)
+                        write_log(re["log"],"./"+name+".txt")
+                        file_stats = os.stat("./"+name+".txt")
+                        if file_stats.st_size / (1024 * 1024)>=max_file_size:
+                                with open('./' + name +'.txt', 'w') as f:
+                                    f.write('')
+            except:
+                pass
+
+
            
 
         
