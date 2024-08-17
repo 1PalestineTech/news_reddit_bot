@@ -3,7 +3,7 @@
           {
                 "name":"",
                 "instance_type":"reddit",
-                "SUB_REDDIT": "",
+                "SUB_REDDIT": [""],
                 "userAgent": "",
                 "clientId": "",
                 "clientSecret": "",
@@ -20,7 +20,7 @@
           {
             "name":"",
             "instance_type":"twitter",
-            "tags":"",
+            "tags":[""],
             "CONSUMER_KEY" : "",
             "CONSUMER_SECRET" : "",
             "ACCESS_KEY": "",
