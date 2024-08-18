@@ -134,7 +134,7 @@ def tread(instance):
     client_id = clientId,
     client_secret = clientSecret,
     refresh_token = refreshToken,
-    user_agent = userAgent,)
+    user_agent = userAgent)
         for link in links.keys():
             try:
                 re,f = get_data(link,time_rang_h,time_rang_m,name)
@@ -171,7 +171,7 @@ def tread(instance):
         consumer_key=CONSUMER_KEY,
         consumer_secret=CONSUMER_SECRET,
          )
-        api = tweepy.API(auth)
+        api = tweepy.API(auth,wait_on_rate_limit=True)
         tags = " ".join(instance['tags'])
         
         for link in links.keys():
@@ -197,7 +197,8 @@ def tread(instance):
                                 with open('./' + name +'.txt', 'w') as f:
                                     f.write('')
             except:
-                pass
+                write_log("problem with twitter api ","./"+name+".txt")
+                sleep(post_time_s+post_time_m*60)
 
 
            
