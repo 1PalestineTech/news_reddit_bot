@@ -13,7 +13,7 @@ import os
 import html
 import os.path
 import pytz
-import tweepy
+from requests_oauthlib import OAuth1Session
 TIME_ZONE = os.environ['time_zone']
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
@@ -153,25 +153,17 @@ def tread(instance):
                 pass
     elif instance['flag'] and instance_type=='twitter':
 
-        CONSUMER_KEY = instance['CONSUMER_KEY']
-        CONSUMER_SECRET = instance['CONSUMER_SECRET']
-        ACCESS_KEY = instance['ACCESS_KEY']
-        ACCESS_SECRET = instance['ACCESS_SECRET']
+        consumer_key  = instance['CONSUMER_KEY']
+        consumer_secret = instance['CONSUMER_SECRET']
+        access_token = instance['ACCESS_KEY']
+        access_token_secret = instance['ACCESS_SECRET']
         BEARER_TOKEN = instance['BEARER_TOKEN']
-
-        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-        auth.set_access_token(
-        ACCESS_KEY,
-        ACCESS_SECRET,
-        )
-        newapi = tweepy.Client(
-        bearer_token=BEARER_TOKEN,
-        access_token=ACCESS_KEY,
-        access_token_secret=ACCESS_SECRET,
-        consumer_key=CONSUMER_KEY,
-        consumer_secret=CONSUMER_SECRET,
-         )
-        api = tweepy.API(auth,wait_on_rate_limit=True)
+        oauth = OAuth1Session(
+    consumer_key,
+    client_secret=consumer_secret,
+    resource_owner_key=access_token,
+    resource_owner_secret=access_token_secret,
+)
         tags = " ".join(instance['tags'])
         
         for link in links.keys():
@@ -189,7 +181,12 @@ def tread(instance):
 
 {re['link']}
 """
-                        post_result = newapi.create_tweet(text=sampletweet)
+                        payload = {"text": sampletweet}
+                        response = oauth.post(
+    "https://api.twitter.com/2/tweets",
+    json=payload,
+)
+                        print("Response code: {}".format(response.status_code))
                         sleep(post_time_s+post_time_m*60)
                         write_log(re["log"],"./"+name+".txt")
                         file_stats = os.stat("./"+name+".txt")
