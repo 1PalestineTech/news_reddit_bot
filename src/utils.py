@@ -143,8 +143,9 @@ def tread(instance):
                     if f:
                         for sub in subs:
                             reddit.subreddit(sub).submit(re['title'], url=re['link'])
-                        sleep(post_time_s+post_time_m*60)
+                        
                         write_log(re["log"],"./"+name+".txt")
+                        sleep(post_time_s+post_time_m*60)
                         file_stats = os.stat("./"+name+".txt")
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
                                 with open('./' + name +'.txt', 'w') as f:
@@ -187,15 +188,15 @@ def tread(instance):
     json=payload,
 )
                         print("Response code: {}".format(response.status_code))
-                        sleep(post_time_s+post_time_m*60)
                         write_log(re["log"],"./"+name+".txt")
+                        sleep(post_time_s+post_time_m*60)
                         file_stats = os.stat("./"+name+".txt")
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
                                 with open('./' + name +'.txt', 'w') as f:
                                     f.write('')
             except:
                 write_log("problem with twitter api ","./"+name+".txt")
-                sleep(post_time_s+post_time_m*60)
+                sleep(30)
 
 
            
@@ -214,5 +215,5 @@ def main():
             th.start()
         for th in threads:
             th.join()
-        sleep(60*2)
+        sleep(30)
 
