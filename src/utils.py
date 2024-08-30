@@ -14,7 +14,13 @@ import html
 import os.path
 import pytz
 from requests_oauthlib import OAuth1Session
+
+
+from flask import request, render_template, session
+from functools import wraps
+
 TIME_ZONE = os.environ['time_zone']
+
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
     if os.path.isfile(file):
@@ -217,3 +223,30 @@ def main():
             th.join()
         sleep(30)
 
+
+def login_required(f):
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        db = sqlite3.connect('web_data.db')
+        if session.get("user_id") is None :
+            return render_template("error.html", top=503, bottom="no permission",url=request.path),503
+        cursor = db.execute("SELECT * FROM admins WHERE id = (?) ",(session.get("user_id"),))
+        rows = cursor.fetchall()
+        if len(rows) !=1 :
+            return render_template("error.html", top=403, bottom="no permission",url=request.path),403 
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def head_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        db = sqlite3.connect('web_data.db')
+        cursor = db.execute("SELECT * FROM head_admin WHERE id = (?) ",(session.get("user_id"),))
+        rows = cursor.fetchall()
+        if len(rows) !=1 :
+            return render_template("error.html", top=403, bottom="no permission",url=request.path),403 
+        return f(*args, **kwargs)
+
+    return decorated_function
