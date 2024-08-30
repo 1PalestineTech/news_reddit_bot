@@ -222,7 +222,7 @@ def set_bot():
 
 
 def start_server():
-    app.run(host='0.0.0.0',port="3080")
+    app.run(host='0.0.0.0',port=PORT)
 
 if __name__ == '__main__':
    print("App started")
