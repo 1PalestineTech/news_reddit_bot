@@ -234,7 +234,7 @@ def login_required(f):
         cursor = db.execute("SELECT * FROM admins WHERE id = (?) ",(session.get("user_id"),))
         rows = cursor.fetchall()
         if len(rows) !=1 :
-            return render_template("error.html", top=403, bottom="no permission",url=request.path),403 
+            return render_template("admin_login.html"),300 
         return f(*args, **kwargs)
 
     return decorated_function
