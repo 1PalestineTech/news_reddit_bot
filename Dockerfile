@@ -7,6 +7,6 @@ EXPOSE 3000
 ENTRYPOINT [ "python" ]
 
 ENV time_zone="Asia/Jerusalem"
-
+ENV PORT="3080"
 
 CMD [ "app.py" ]

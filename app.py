@@ -7,12 +7,14 @@ import threading
 from flask_session import Session
 import shortuuid
 import sqlite3
+import os
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
+PORT = os.environ['PORT'] 
 @app.route('/admin_login', methods = ['GET','POST'])
 def login():
     db = sqlite3.connect('web_data.db')
