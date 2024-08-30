@@ -1,6 +1,6 @@
 
 from src.utils import main,url_test,write_log,head_admin,login_required
-from flask import Flask, render_template,make_response,request,redirect
+from flask import Flask, render_template,make_response,request,redirect,session
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
 import threading
@@ -17,7 +17,7 @@ Session(app)
 PORT = os.environ['PORT'] 
 @app.route('/admin_login', methods = ['GET','POST'])
 def login():
-    db = sqlite3.connect('web_data.db')
+    db = sqlite3.connect('data.db')
     if request.method == "POST":
 
         if not request.form.get("username"):
@@ -39,7 +39,7 @@ def login():
         else:
             return render_template("admin_login.html")
     
-@app.route('/logout', methods = ['POST'])
+@app.route('/logout', methods = ['POST','GET'])
 def logout():
     session.clear()
     return redirect('/')
@@ -48,7 +48,7 @@ def logout():
 @app.route('/change_password', methods = ['GET','POST'])
 @login_required
 def change_password():
-    db = sqlite3.connect('web_data.db')
+    db = sqlite3.connect('data.db')
     if request.method == "POST":
         if not request.form.get("old_password"):
             return render_template("error.html", top=403, bottom="must provide old password",url=request.path),403 
@@ -87,7 +87,7 @@ def add_admin():
 
         elif not request.form.get("password"):
             return render_template("error.html", top=403, bottom="must provide password",url=request.path),403 
-        db = sqlite3.connect('web_data.db')
+        db = sqlite3.connect('data.db')
         cursor = db.execute("SELECT * FROM admins WHERE username = (?) ",(username,))
         rows = cursor.fetchall()
         if len(rows)>0:
@@ -109,7 +109,7 @@ def add_admin():
 @login_required
 @head_admin
 def remove_admin():
-    db = sqlite3.connect('web_data.db')
+    db = sqlite3.connect('data.db')
     if request.method == "POST":
         
         ids = request.form.getlist('admins')
