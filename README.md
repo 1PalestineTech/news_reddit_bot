@@ -40,7 +40,8 @@ inside instance there is obect represent bot configurations for each instance it
 - **name** it represent the name that will be display in the Web UI also name of the file where the bot will log data for this instance
 - **instance_type** represent the type of the instance it can be reddit or twitter
 - **SUB_REDDIT** list of the subreddit where the bot will post using this configuration
-- **userAgent** , **clientId** , **clientSecret** and **refreshToken** are token that you get from ``https://www.reddit.com/prefs/apps/`` and ``https://not-an-aardvark.github.io/reddit-oauth-helper/``
+- **userAgent** random string to identify the bot account it can be like news_botV1.0
+- **clientId** , **clientSecret** and **refreshToken** are token that you get from ``https://www.reddit.com/prefs/apps/`` and ``https://not-an-aardvark.github.io/reddit-oauth-helper/``
 - **regex** is list regexs to check in title of the news before posting it if it match regex it post the news
 - **links** object  represent the links from where to fetch news the key is the news feed link the value is discription about the news
 - **max_file_size** max size of the log file in maga bytes if it get larger then this value it get cleanned to in empty file
