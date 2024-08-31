@@ -14,12 +14,11 @@ import html
 import os.path
 import pytz
 from requests_oauthlib import OAuth1Session
-
-
 from flask import request, render_template, session
 from functools import wraps
 
 TIME_ZONE = os.environ['time_zone']
+
 
 def write_log(val,file = './logger.txt'):
     val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
@@ -39,6 +38,9 @@ def check_regex(regexs,text):
         if bool(re.search(regex,text,flags = re.IGNORECASE)):
             return True
     return False
+
+
+
 def check_url(db,res,regex,name):
     title = res['title']
     if not check_regex(regex,title):
@@ -49,13 +51,15 @@ def check_url(db,res,regex,name):
     cursor = db.execute("SELECT * FROM urls WHERE url = (?) AND sub=(?)",(res["link"],name))
     rows = cursor.fetchall()
     if len(rows) == 0:
-        cursor = db.execute('INSERT INTO urls VALUES (?,?)',(res["link"],name))    
+        cursor = db.execute('INSERT INTO urls ("url","sub") VALUES (?,?)',(res["link"],name))    
         db.commit()   
         res["log"]+="posted : "+res["title"] +"\n"
         return (res,True)
     else:
         res["log"]+="we aleardy posted it \n" 
         return (res,False)
+
+
 
 def get_data(url,time_rang_h,time_rang_m,name):
     header = {
@@ -85,12 +89,13 @@ def get_data(url,time_rang_h,time_rang_m,name):
     p_date=date
     date = time.mktime(parser.parse(date).timetuple())
     if (now - date) > 0 and (now - date) > (time_rang_h*60+time_rang_m)*60:
-        write_log("no new news from :" +url+"\n last news was at  :" +p_date,"./"+name+".txt")
-
-         
+        write_log("no new news from :" +url+"\n last news was at  :" +p_date,"./"+name+".txt") 
         return (post,False)
     post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
     return (post,True)
+
+
+
 
 def url_test(url):
     header = {
@@ -118,6 +123,9 @@ def url_test(url):
             post["date"] = data[0].findAll('dc:date')[0].text 
     return str(post)
 
+
+
+
 def tread(instance):
     db=sqlite3.connect('data.db')
     name=instance['name']
@@ -141,30 +149,30 @@ def tread(instance):
     client_secret = clientSecret,
     refresh_token = refreshToken,
     user_agent = userAgent)
-        for link in links.keys():
-            try:
+        try:
+            for link in links.keys():
                 re,f = get_data(link,time_rang_h,time_rang_m,name)
                 if f:
                     re,f = check_url(db,re,regex,name)
                     if f:
                         for sub in subs:
+                            
                             reddit.subreddit(sub).submit(re['title'], url=re['link'])
-                        
+ 
                         write_log(re["log"],"./"+name+".txt")
                         sleep(post_time_s+post_time_m*60)
                         file_stats = os.stat("./"+name+".txt")
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
-                                with open('./' + name +'.txt', 'w') as f:
-                                    f.write('')
-            except:
-                pass
+                            with open('./' + name +'.txt', 'w') as f:
+                                f.write('')
+        except:
+            write_log("problem with reddit api ","./"+name+".txt")
+            pass
     elif instance['flag'] and instance_type=='twitter':
-
         consumer_key  = instance['CONSUMER_KEY']
         consumer_secret = instance['CONSUMER_SECRET']
         access_token = instance['ACCESS_KEY']
         access_token_secret = instance['ACCESS_SECRET']
-        BEARER_TOKEN = instance['BEARER_TOKEN']
         oauth = OAuth1Session(
     consumer_key,
     client_secret=consumer_secret,
@@ -172,37 +180,37 @@ def tread(instance):
     resource_owner_secret=access_token_secret,
 )
         tags = " ".join(instance['tags'])
-        
-        for link in links.keys():
-            try:
+        try:
+
+            for link in links.keys():
                 re,f = get_data(link,time_rang_h,time_rang_m,name)
                 if f:
                     re,f = check_url(db,re,regex,name)
-                    if f:
-                        
+                    if f:        
                         sampletweet=f"""
-{re['title']}
+    {re['title']}
 
-{tags}
+    {tags}
 
 
-{re['link']}
-"""
+    {re['link']}
+    """
                         payload = {"text": sampletweet}
+                        
                         response = oauth.post(
-    "https://api.twitter.com/2/tweets",
-    json=payload,
-)
-                        print("Response code: {}".format(response.status_code))
+        "https://api.twitter.com/2/tweets",
+        json=payload,
+    )
+                        
                         write_log(re["log"],"./"+name+".txt")
                         sleep(post_time_s+post_time_m*60)
                         file_stats = os.stat("./"+name+".txt")
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
-                                with open('./' + name +'.txt', 'w') as f:
-                                    f.write('')
-            except:
-                write_log("problem with twitter api ","./"+name+".txt")
-                sleep(30)
+                            with open('./' + name +'.txt', 'w') as f:
+                                f.write('')
+        except:
+            write_log("problem with twitter api ","./"+name+".txt")
+            pass
 
 
            
