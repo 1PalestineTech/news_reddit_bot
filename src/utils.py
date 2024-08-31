@@ -149,8 +149,9 @@ def tread(instance):
     client_secret = clientSecret,
     refresh_token = refreshToken,
     user_agent = userAgent)
-        try:
-            for link in links.keys():
+        
+        for link in links.keys():
+            try:
                 re,f = get_data(link,time_rang_h,time_rang_m,name)
                 if f:
                     re,f = check_url(db,re,regex,name)
@@ -165,9 +166,9 @@ def tread(instance):
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
                             with open('./' + name +'.txt', 'w') as f:
                                 f.write('')
-        except:
-            write_log("problem with reddit api ","./"+name+".txt")
-            pass
+            except:
+               write_log("problem with reddit api ","./"+name+".txt")
+               pass
     elif instance['flag'] and instance_type=='twitter':
         consumer_key  = instance['CONSUMER_KEY']
         consumer_secret = instance['CONSUMER_SECRET']
@@ -180,9 +181,10 @@ def tread(instance):
     resource_owner_secret=access_token_secret,
 )
         tags = " ".join(instance['tags'])
-        try:
+        
 
-            for link in links.keys():
+        for link in links.keys():
+            try:
                 re,f = get_data(link,time_rang_h,time_rang_m,name)
                 if f:
                     re,f = check_url(db,re,regex,name)
@@ -208,9 +210,9 @@ def tread(instance):
                         if file_stats.st_size / (1024 * 1024)>=max_file_size:
                             with open('./' + name +'.txt', 'w') as f:
                                 f.write('')
-        except:
-            write_log("problem with twitter api ","./"+name+".txt")
-            pass
+            except:
+               write_log("problem with twitter api ","./"+name+".txt")
+               pass
 
 
            
