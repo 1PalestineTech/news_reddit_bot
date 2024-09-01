@@ -121,7 +121,7 @@ def remove_admin():
                 db.commit()
         return redirect('/remove_admin')
     
-    cursor = db.execute("SELECT * from admins where id not in (select id from head_admins) ")
+    cursor = db.execute("SELECT * from admins where id not in (select id from head_admin) ")
     rows = cursor.fetchall()
     return render_template("remove_admin.html",admins=rows)
 
