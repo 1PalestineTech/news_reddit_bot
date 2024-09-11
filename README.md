@@ -87,4 +87,15 @@ the basic empty configuration for twitter look like this :
 ### Remarque :
 you can run twitter bot and reddit bot together like adding them both to the instance list but it better to not do that cuz for each twitter bot it take 15 min to post new thing and the python code use multi thread for each instance and  wait until all instance finish their to run again so if you run twitter with reddit the twitter instance may take larger time and hold the bot so it will be no new news in reddit untill twitter bot finish it job
 
-## The web UI 
+## running the bot
+to start and run the bot check the steps bellow
+### Running the docker version
+to run the docker version first pull the latest image  ali141/news_bot:0.2.1.REALEASE  
+then run the command bellow ``docker run -e PORT="portNumber" -p portNumber:portNumber imageid ``   
+- Port is the port that you want the bot to use
+- imageid is the id of the image youcan get the id using ``docker images``
+- you may also add ``time_zone="the timzone"`` after ``PORT="portNumber`` to specify the timezone that you want the bot use 
+### Running python code
+you can run the python version from github by clonning this repository then run ``pip install -r requirements.txt``
+then if you in unix based system run ``flask run`` 
+if you are in windows os run ``python -m venv env`` then run ``pip install -r requirements.txt`` then run ``fask run``
