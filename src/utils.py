@@ -222,16 +222,19 @@ def tread(instance):
 
 def main():
     while True:
-        with open('./config.json', 'r') as f:
-            config = json.load(f)
-        threads=[]
-        for instance in config['instances']:
-            threads.append(threading.Thread(target=tread, args=(instance,)))
-        for th in threads:
-            th.start()
-        for th in threads:
-            th.join()
-        sleep(30)
+        try:
+            with open('./config.json', 'r') as f:
+                config = json.load(f)
+            threads=[]
+            for instance in config['instances']:
+                threads.append(threading.Thread(target=tread, args=(instance,)))
+            for th in threads:
+                th.start()
+            for th in threads:
+                th.join()
+            sleep(30)
+        except:
+            pass
 
 
 def login_required(f):
