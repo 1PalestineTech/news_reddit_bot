@@ -213,7 +213,39 @@ def tread(instance):
             except:
                write_log("problem with twitter api ","./"+name+".txt")
                pass
-
+    elif instance['flag'] and instance_type=='mastodon':
+            access_token = instance['ACCESS_TOKEN']
+            for link in links.keys():
+                try:
+                    re,f = get_data(link,time_rang_h,time_rang_m,name)
+                    if f:
+                        re,f = check_url(db,re,regex,name)
+                        if f:        
+                            status=f"""
+        {re['title']}
+    
+    
+        {re['link']}"""
+                            
+                            response = requests.post("https://mastodon.social/api/v1/statuses", headers= {
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "authorization": f"Bearer {access_token}",
+        "content-type": "application/json",
+        "Referer": "https://mastodon.social/@alitigui",
+    }
+      ,json = {"status":status}
+    )
+                            
+                            write_log(re["log"],"./"+name+".txt")
+                            sleep(post_time_s+post_time_m*60)
+                            file_stats = os.stat("./"+name+".txt")
+                            if file_stats.st_size / (1024 * 1024)>=max_file_size:
+                                with open('./' + name +'.txt', 'w') as f:
+                                    f.write('')
+                except:
+                   write_log("problem with api ","./"+name+".txt")
+                   pass
+    
 
            
 
