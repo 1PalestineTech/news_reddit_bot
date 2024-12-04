@@ -7,8 +7,10 @@ import bs4 as bs
 from flask import request, render_template, session
 from functools import wraps
 
-TIME_ZONE = "Asia/Jerusalem"
-
+try:
+    TIME_ZONE = os.environ['TIME_ZONE'] 
+except:
+    TIME_ZONE="Asia/Jerusalem"
 def login_required(f):
     
     @wraps(f)

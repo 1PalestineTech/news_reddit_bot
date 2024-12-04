@@ -13,8 +13,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-
-PORT = "8084"
+try:
+    PORT =  os.environ['PORT'] 
+except:
+    PORT = "8084"
 @app.route('/admin_login', methods = ['GET','POST'])
 def login():
     db = sqlite3.connect('data.db')

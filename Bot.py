@@ -3,7 +3,8 @@ import bs4 as bs
 import requests as rq
 from dateutil import parser
 from requests_oauthlib import OAuth1Session
-class BOT:
+
+class BOT():
     def __init__(self,instance,TIME_ZONE,conf):
         self.conf=conf
         self.db=sqlite3.connect('data.db')
@@ -17,8 +18,7 @@ class BOT:
         self.post_time_m = instance['post_time_m']
         self.TIME_ZONE=TIME_ZONE
         self.post={}
-        self.countinue=True
-        self.instance_type=instance['instance_type']
+        self.flag=True
     def write_log(self,val,file = './logger.txt'):
         val+="\n" + str(datetime.datetime.now(pytz.timezone(self.TIME_ZONE))) + "\n================================ \n"
         if os.path.isfile(file):
@@ -30,6 +30,10 @@ class BOT:
             with open(file, 'w') as f:
                 f.write(val.rstrip('\r\n')  )
     def get_data(self,url):
+        self.post["title"]=""
+        self.post["link"]=""
+        self.post["log"]=""
+        self.post["date"]=""
         header = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,
     'referer':'https://www.google.com/'
@@ -38,7 +42,7 @@ class BOT:
         try:
             prased = bs.BeautifulSoup(rq.get(url,headers=header).text, "xml")
         except:
-            self.countinue=False
+            self.flag=False
             return 
         data = prased.findAll('entry')
         if len(data)>1:
@@ -57,25 +61,27 @@ class BOT:
         date = time.mktime(parser.parse(date).timetuple())
         if (now - date) > 0 and (now - date) > (self.time_rang_h*60+self.time_rang_m)*60:
             self.write_log("no new news from :" +url+"\n last news was at  :" +p_date,"./"+self.name+".txt") 
-            self.countinue=False
+            self.flag=False
             return
         self.post["log"]="detected new data from :" +url +"\n"+"now testing regex:" +url +"\n"
-        self.countinue=True
+        self.flag=True
+    
         
     def check_regex(self,text):
         if len(self.regex) == 0:
-            self.countinue=True
+            self.flag=True
             return
         for regex in self.regex:
             if bool(re.search(regex,text,flags = re.IGNORECASE)):
-                self.countinue=True
+                self.flag=True
                 return
-        self.countinue=False
+        self.flag=False
     def check_url(self):
         title = self.post['title']
-        if not self.check_regex(title):
+        self.check_regex(title)
+        if self.flag:
             self.post["log"] += "regex didn't match "  +"\n"
-            self.countinue=False
+            self.flag=False
             return
         else:
             self.post["log"] += "regex matched \n"
@@ -85,24 +91,22 @@ class BOT:
             cursor = self.db.execute('INSERT INTO urls ("url","sub") VALUES (?,?)',(self.post["link"],self.name))    
             self.db.commit()   
             self.post["log"]+="posted : "+self.post["title"] +"\n"
-            self.countinue=True
+            self.flag=True
         else:
             self.post["log"]+="we aleardy posted it \n" 
-            self.countinue=False
-    def post():
-        print("hello")
+            self.flag=False
     def run(self):
         while True:
             for link in self.links.keys():
                 with open('./config.json', 'r') as f:
                     config = json.load(f)
-                if config!=self.conf:
+                if config !=self.conf :
                     return
                 try:
                     self.get_data(link)
-                    self.check_url()
-                    if self.countinue:        
-                        self.post()         
+                    self.check_url()  
+                    if self.flag:  
+                        self.make_post()  
                         self.write_log(self.post["log"],"./"+self.name+".txt")
                         time.sleep(self.post_time_s+self.post_time_m*60)
                         file_stats = os.stat("./"+self.name+".txt")
@@ -110,8 +114,9 @@ class BOT:
                             with open('./' + self.name +'.txt', 'w') as f:
                                         f.write('')
                 except:
-                    self.write_log("problem with api ","./"+self.name+".txt")
-                    pass
+                    self.write_log(f"problem with api caused by {link}","./"+self.name+".txt")
+                    time.sleep(2)
+
 
 class Reddit(BOT):
     def __init__(self,instance,TIME_ZONE,config):
@@ -122,10 +127,10 @@ class Reddit(BOT):
     client_secret = instance['clientSecret'],
     refresh_token = instance['refreshToken'],
     user_agent = instance['userAgent'])
-    def post(self):
+    def make_post(self):
         for sub in self.subs: 
             self.reddit.subreddit(sub).submit(re['title'], url=re['link'])
-            self.write_log(re["log"],"./"+self.name+".txt")
+
 
 class Twitter(BOT):
     def __init__(self,instance,TIME_ZONE,config):
@@ -137,24 +142,25 @@ class Twitter(BOT):
     resource_owner_key=instance['ACCESS_KEY'],
     resource_owner_secret=instance['ACCESS_SECRET'],
 )
-    def post(self):
+    def make_post(self):
         tags = " ".join(self.tags)
         sampletweet=f"{self.post['title']}\n{tags}\n\n{self.post['link']}"
         self.oauth.post("https://api.twitter.com/2/tweets",json={"text": sampletweet})
-               
+            
 class Mardon(BOT):
     def __init__(self,instance,TIME_ZONE,config):
         super().__init__(instance,TIME_ZONE,config)
         self.access_token = instance['ACCESS_TOKEN']
-    def post(self):
- 
-        status=f"{self.post['title']}\n\n{self.post['link']}"                      
-        rq.post("https://mastodon.social/api/v1/statuses", headers= {
+    def make_post(self):
+        print("hi from post")
+        status=f"{self.post['title']}\n\n{self.post['link']}"      
+        rq.post("https://freefree.ps/api/v1/statuses", headers= {
         "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
         "authorization": f"Bearer {self.access_token}",
         "content-type": "application/json",
-        "Referer": "https://mastodon.social/@alitigui",
+        "Referer": "https://freefree.ps/@ali",
     }
       ,json = {"status":status}
-    )
+        )
+
     
