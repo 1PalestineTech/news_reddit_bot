@@ -14,7 +14,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-PORT = os.environ['PORT'] 
+PORT = "8084"
 @app.route('/admin_login', methods = ['GET','POST'])
 def login():
     db = sqlite3.connect('data.db')
