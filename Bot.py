@@ -68,6 +68,7 @@ class BOT():
     
         
     def check_regex(self,text):
+        
         if len(self.regex) == 0:
             self.flag=True
             return
@@ -79,7 +80,7 @@ class BOT():
     def check_url(self):
         title = self.post['title']
         self.check_regex(title)
-        if self.flag:
+        if not self.flag:
             self.post["log"] += "regex didn't match "  +"\n"
             self.flag=False
             return
@@ -129,7 +130,7 @@ class Reddit(BOT):
     user_agent = instance['userAgent'])
     def make_post(self):
         for sub in self.subs: 
-            self.reddit.subreddit(sub).submit(re['title'], url=re['link'])
+            self.reddit.subreddit(sub).submit(self.post['title'], url=self.post['link'])
 
 
 class Twitter(BOT):
