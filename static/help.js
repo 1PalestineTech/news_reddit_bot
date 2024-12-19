@@ -67,3 +67,7 @@ function Clear(){
 
         }
 
+function Save_backup(){
+            fetch("../save_backup")
+        .then((e)=> alert("backup saved"));
+    }
