@@ -3,6 +3,7 @@ from src.utils import main,url_test,write_log,head_admin,login_required
 from flask import Flask, render_template,make_response,request,redirect,session
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
+import praw
 import threading
 from flask_session import Session
 import shortuuid
@@ -171,15 +172,33 @@ def config():
         with open('./config.json', 'r') as f:
             data = f.read()
         return render_template("config.html",data = data)
-    
 
+@app.route('/save_backup', methods = ['GET']) 
+@login_required
+def save_backup(): 
+    if request.method == 'GET':
+
+        with open('./config.json', 'r') as f:
+            data = f.read()
+        with open('./config.json', 'r') as f:
+            config = json.load(f)
+        instance=config["backup"]
+        sub = instance['SUB_REDDIT']
+        wiki= instance['wiki_name']
+        reddit = praw.Reddit(
+                client_id = instance['clientId'],
+                client_secret = instance['clientSecret'],
+                refresh_token = instance['refreshToken'],
+                user_agent = instance['userAgent'])
+        page = reddit.subreddit(sub).wiki[wiki]
+        page.edit(content=data)
+        return "200"
 
 @app.route('/get_data', methods = ['GET']) 
 @login_required
 def get_data(): 
     with open('./config.json', 'r') as f:
         data = f.read()
-
     return data
 
 
