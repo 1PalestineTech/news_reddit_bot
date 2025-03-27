@@ -7,7 +7,7 @@ from requests_oauthlib import OAuth1Session
 class BOT():
     def __init__(self,instance,TIME_ZONE,conf):
         self.conf=conf
-        self.db=sqlite3.connect('data.db')
+        self.db=None
         self.name=instance['name']
         self.links = instance['links']
         self.regex = instance['regex']
@@ -19,7 +19,14 @@ class BOT():
         self.TIME_ZONE=TIME_ZONE
         self.post={}
         self.flag=True
-    def write_log(self,val,file = './logger.txt'):
+    def get_db(self):
+        
+        self.db = sqlite3.connect('data.db')
+        
+    def close(self):
+        
+        self.db.close()
+    def write_log(self,val,file = './log.txt'):
         val+="\n" + str(datetime.datetime.now(pytz.timezone(self.TIME_ZONE))) + "\n================================ \n"
         if os.path.isfile(file):
             with open(file, 'r+') as f:
@@ -86,19 +93,22 @@ class BOT():
             return
         else:
             self.post["log"] += "regex matched \n"
+        
         cursor = self.db.execute("SELECT * FROM urls WHERE url = (?) AND sub=(?)",(self.post["link"],self.name))
         rows = cursor.fetchall()
         if len(rows) == 0:
             cursor = self.db.execute('INSERT INTO urls ("url","sub") VALUES (?,?)',(self.post["link"],self.name))    
             self.db.commit()   
+            
             self.post["log"]+="posted : "+self.post["title"] +"\n"
             self.flag=True
         else:
-            self.post["log"]+="we aleardy posted it \n" 
+            self.post["log"] += "we aleardy posted it \n" 
             self.flag=False
     def run(self):
         while True:
             for link in self.links.keys():
+                self.get_db()
                 with open('./config.json', 'r') as f:
                     config = json.load(f)
                 if config !=self.conf :
@@ -114,10 +124,11 @@ class BOT():
                         if file_stats.st_size / (1024 * 1024)>=self.max_file_size:
                             with open('./' + self.name +'.txt', 'w') as f:
                                         f.write('')
-                except:
-                    self.write_log(f"problem with api caused by {link}","./"+self.name+".txt")
-                    time.sleep(2)
-
+                except Exception as e:
+                    self.write_log(f"Critical error: {str(e)}", "./"+self.name+".txt")
+                    time.sleep(30)
+                self.post = {}
+                self.close()
 
 class Reddit(BOT):
     def __init__(self,instance,TIME_ZONE,config):

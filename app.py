@@ -252,5 +252,4 @@ if __name__ == '__main__':
    bot = threading.Thread(target = main)
    server.start()
    bot.start()
-   bot.join()
-   server.join()
+

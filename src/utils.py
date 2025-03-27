@@ -1,5 +1,5 @@
 from time import sleep
-from Bot import Reddit,Twitter,Mardon
+from src.Bot import Reddit,Twitter,Mardon
 import sqlite3,json,threading,os,html,os.path,pytz,datetime
 import requests as rq
 import bs4 as bs
@@ -17,10 +17,12 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         db = sqlite3.connect('data.db')
         if session.get("user_id") is None :
+            db.close()
             return render_template("admin_login.html"),300
         cursor = db.execute("SELECT * FROM admins WHERE id = (?) ",(session.get("user_id"),))
         rows = cursor.fetchall()
         if len(rows) !=1 :
+            db.close()
             return render_template("admin_login.html"),300 
         return f(*args, **kwargs)
 
@@ -33,11 +35,12 @@ def head_admin(f):
         cursor = db.execute("SELECT * FROM head_admin WHERE id = (?) ",(session.get("user_id"),))
         rows = cursor.fetchall()
         if len(rows) !=1 :
+            db.close()
             return render_template("error.html", top=403, bottom="no permission",url=request.path),403 
         return f(*args, **kwargs)
 
     return decorated_function
-def write_log(val,file = './logger.txt'):
+def write_log(val,file = './log.txt'):
         val+="\n" + str(datetime.datetime.now(pytz.timezone(TIME_ZONE))) + "\n================================ \n"
         if os.path.isfile(file):
             with open(file, 'r+') as f:
@@ -53,7 +56,7 @@ def url_test(url):
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,
     'referer':'https://www.google.com/'
     }
-    post = {}
+    post = {"title":"url not working"}
 
     try:
         prased = bs.BeautifulSoup(rq.get(url,headers=header).text, "xml")
@@ -95,13 +98,15 @@ def main():
         try:
             with open('./config.json', 'r') as f:
                 config = json.load(f)
-            threads=[]
+            if 'threads' in locals():
+                for th in threads:
+                    th.join() 
+            threads = []
             for instance in config['instances']:
-                threads.append(threading.Thread(target=tread, args=(instance,)))
-            for th in threads:
-                th.start()
-            for th in threads:
-                th.join()
+                if instance['flag']:  # Only start if enabled
+                    th = threading.Thread(target=tread, args=(instance,))
+                    threads.append(th)
+                    th.start()
+        except Exception as e:
+            write_log(f"Main loop error: {str(e)}")
             sleep(30)
-        except:
-            pass
