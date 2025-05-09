@@ -62,6 +62,12 @@ function Stop(){
     
     })})
         }
+function Restart(){
+            fetch("./restart");
+        
+        alert("Bot Restarted ")
+            }
+            
 function Clear(){
             document.getElementById("check-url").innerHTML="";
 

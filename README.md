@@ -100,3 +100,4 @@ you can run the python version from github by clonning this repository then run 
 then create variable envirenment called PORT for the port that the bot will use and other called time_zone for the timzone that the bot use  
 then if you in unix based system run ``flask run`` 
 if you are in windows os run ``python -m venv env`` then run ``pip install -r requirements.txt`` then run ``fask run``
+

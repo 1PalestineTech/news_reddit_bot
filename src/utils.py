@@ -1,8 +1,11 @@
 from time import sleep
-from src.Bot import Reddit,Twitter,Mardon
+from src.Reddit import Reddit
+from src.Twitter import Twitter
+from src.Mastodon import Mastodon
 import sqlite3,json,threading,os,html,os.path,pytz,datetime
 import requests as rq
 import bs4 as bs
+import base64,requests
 
 from flask import request, render_template, session
 from functools import wraps
@@ -77,20 +80,57 @@ def url_test(url):
             post["date"] = data[0].findAll('dc:date')[0].text 
     return str(post)
 
+def restart_bot():
 
+    GOGS_URL = ""  
+    TOKEN = ""        
+    REPO_OWNER = ""
+    REPO_NAME = ""
+    
+
+    FILE_PATH = "restart.txt"
+    FILE_CONTENT = f"Restarted {str(datetime.datetime.now(pytz.timezone(TIME_ZONE)))}"
+    COMMIT_MSG = "Restarted via  API"
+    BRANCH = "master"
+
+    encoded_content = base64.b64encode(FILE_CONTENT.encode("utf-8")).decode("utf-8")
+    
+    url = f"{GOGS_URL}/api/v1/repos/{REPO_OWNER}/{REPO_NAME}/contents/{FILE_PATH}"
+    headers = {
+        "Authorization": f"token {TOKEN}",
+        "Accept": "application/json"
+    }
+    
+    data = {
+        "content": encoded_content,
+        "message": COMMIT_MSG,
+        "branch": BRANCH
+    }
+    
+    
+    try:
+        response = requests.put(url, headers = headers, json = data)
+        
+        if response.status_code == 201:
+            print("File created/updated successfully!")
+        else:
+            print(f"Error {response.status_code}: {response.text}")
+    
+    except Exception as e:
+        print(f"Request failed: {str(e)}")
 
 
 def tread(instance):
     with open('./config.json', 'r') as f:
         config = json.load(f)
-    if instance['flag'] and instance["instance_type"]=='reddit':
-        reddit_bot=Reddit(instance,TIME_ZONE,config)
+    if instance['flag'] and instance["instance_type"] == 'reddit':
+        reddit_bot = Reddit(instance, TIME_ZONE, config)
         reddit_bot.run()
-    elif instance['flag'] and instance["instance_type"]=='twitter':
-        twitter_bot=Twitter(instance,TIME_ZONE,config)
+    elif instance['flag'] and instance["instance_type"] == 'twitter':
+        twitter_bot = Twitter(instance, TIME_ZONE, config)
         twitter_bot.run()
-    elif instance['flag'] and instance["instance_type"]=='mastodon':
-        mastodon=Mardon(instance,TIME_ZONE,config)
+    elif instance['flag'] and instance["instance_type" ]== 'mastodon':
+        mastodon = Mastodon(instance, TIME_ZONE, config)
         mastodon.run()
 
 def main():
@@ -104,7 +144,7 @@ def main():
             threads = []
             for instance in config['instances']:
                 if instance['flag']:  # Only start if enabled
-                    th = threading.Thread(target=tread, args=(instance,))
+                    th = threading.Thread(target = tread, args = (instance,))
                     threads.append(th)
                     th.start()
         except Exception as e:

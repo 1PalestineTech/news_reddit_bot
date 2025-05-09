@@ -1,5 +1,5 @@
 
-from src.utils import main,url_test,write_log,head_admin,login_required
+from src.utils import main,url_test,write_log,head_admin,login_required,restart_bot
 from flask import Flask, render_template,make_response,request,redirect,session
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
@@ -9,6 +9,8 @@ from flask_session import Session
 import shortuuid
 import sqlite3
 import os
+
+
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -130,7 +132,6 @@ def remove_admin():
 
 
 
-
 @app.route('/',methods = ['GET'])
 @login_required
 def index():
@@ -241,15 +242,19 @@ def set_bot():
     write_log( text,'./'+request.cookies.get('file') +'.txt')
     return redirect('/')
 
+@app.route('/restart',methods = ['GET',"POST"])
+@login_required
+def restart():
+    restart_bot()
+    return redirect('/')
 
 def start_server():
     app.run(host='0.0.0.0',port=PORT)
 
 if __name__ == '__main__':
-   print("App started")
-   
    server = threading.Thread(target = start_server)
    bot = threading.Thread(target = main)
    server.start()
    bot.start()
-
+   bot.join()
+   server.join()
